@@ -899,8 +899,8 @@ window.createLoginUI = function (options = {}) {
  const content=document.querySelector('#content'),style=content&&getComputedStyle(content);
  const width=Math.max(1100,content?content.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2:1600);
  const mobile=window.innerWidth<=800,shellHeight=Math.max(mobile?450:500,window.innerHeight-(mobile?20:24));
- const height=Math.max(920,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.18);
- const lane=i=>748+dbShift+12*i,bottomY=825+Math.round(extra*.3);
+ const height=Math.max(920,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.18)-10;
+ const lane=i=>748+dbShift+12*i,bottomY=818+dbShift;
 
  const accents={
   '#3e78ad':{fill:'#3678b3',ink:'#fff',border:'#5b95c3'},
@@ -935,7 +935,7 @@ window.createLoginUI = function (options = {}) {
  // This prevents the outbound vertical from intersecting the entrusted receipt return.
  s+=line(`M252.5 704V${lane(3)}H730`)+line(`M602 704V${lane(2)}H730`)+line(`M772 704V${740+dbShift}`)+line(`M999 704V${lane(0)}H920`)+line(`M1169 704V${lane(1)}H920`)+line(`M1275 230V${lane(2)}H920`)+line(`M1396 704V${lane(3)}H920`);
  s+=`<g role="button" tabindex="0" aria-label="出入库明细" data-flow-page="出入库明细" data-flow-module="warehouse" class="workflow-node workflow-summary" transform="translate(0 ${dbShift})"><rect x="730" y="740" width="190" height="64" rx="10" fill="url(#flow-summary)" stroke="url(#flow-summary-edge)" stroke-width="1.5"/><path d="M744 746H898L913 761 M737 783V755Q737 747 745 747 M737 792L744 798H906" fill="none" stroke="#75d6f0" stroke-opacity=".25" stroke-width=".8"/><path d="M760 741H881" stroke="#b8f6ff" stroke-width="1.5" stroke-linecap="round"/><path d="M795 802H857" stroke="#24c9ed" stroke-width="2" stroke-linecap="round"/><path d="M888 754h12l8 8v14 M892 758h6l6 6v8" fill="none" stroke="#43b6dd" stroke-opacity=".2"/><g aria-hidden="true"><ellipse cx="760" cy="788" rx="17" ry="3" fill="#001827" opacity=".45"/><path d="M747 759V781C747 789 773 789 773 781V759Z" fill="url(#flow-summary-icon)" stroke="#82e7fc" stroke-width=".9"/><ellipse cx="760" cy="759" rx="13" ry="5" fill="#6bdff3" stroke="#bcf6ff" stroke-width="1"/><path d="M747 767c0 7 26 7 26 0 M747 775c0 7 26 7 26 0" fill="none" stroke="#c5f7ff" stroke-width="1.2"/><path d="M750 763v17" stroke="#e0fcff" stroke-opacity=".45"/></g><text x="841" y="778" text-anchor="middle" fill="#f0fbff" font-size="17" font-weight="600" letter-spacing=".4">出入库明细</text><circle cx="904" cy="752" r="2.3" fill="#64edee" class="workflow-summary-status"/></g>`;
- s+=node('其他入库单',185,bottomY,200,'#437fb5','box','其它出入库','warehouse')+node('其他入库明细',435,bottomY,230,'#437fb5','list','其它出入库','warehouse')+node('其他出库明细',1015,bottomY,230,'#437fb5','list','其它出入库','warehouse')+node('其他出库单',1300,bottomY,205,'#437fb5','box','其它出入库','warehouse')+line(`M385 ${bottomY+17}H435`)+line(`M1300 ${bottomY+17}H1245`)+line(`M665 ${bottomY+17}H710V${lane(4)}H730`)+line(`M1015 ${bottomY+17}H940V${lane(4)}H920`)+line(`M825 ${804+dbShift}V${bottomY-6}`)+node('即时库存',745,bottomY,160,'#408f98','stock','库存查询与货主','warehouse');
+ s+=node('其他入库单',210,bottomY,150,'#437fb5','box','其它出入库','warehouse')+node('其他入库明细',465,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库明细',1045,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库单',1327.5,bottomY,150,'#437fb5','box','其它出入库','warehouse')+line(`M360 ${bottomY+17}H465`)+line(`M1327.5 ${bottomY+17}H1215`)+line(`M635 ${bottomY+17}H710V${lane(4)}H730`)+line(`M1045 ${bottomY+17}H940V${lane(4)}H920`)+line(`M825 ${804+dbShift}V${bottomY-6}`)+node('即时库存',745,bottomY,160,'#408f98','stock','库存查询与货主','warehouse');
  return s+`<text x="1550" y="${height-3}" text-anchor="end" fill="#7896ac" font-size="11">界面原型 · 示例流程 · 点击节点进入对应模块</text></svg></section>`;
  };
  let navigate=null,resizeTimer=null;

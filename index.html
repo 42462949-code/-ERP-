@@ -894,8 +894,8 @@ window.createLoginUI = function (options = {}) {
  const content=document.querySelector('#content'),style=content&&getComputedStyle(content);
  const width=Math.max(1100,content?content.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2:1600);
  const mobile=window.innerWidth<=800,shellHeight=Math.max(mobile?450:500,window.innerHeight-(mobile?20:24));
- const height=Math.max(920,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.48);
- const lane=i=>748+dbShift+12*i,bottomY=825+extra;
+ const height=Math.max(920,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.18);
+ const lane=i=>748+dbShift+12*i,bottomY=825+Math.round(extra*.3);
 
  const accents={
   '#3e78ad':{fill:'#3678b3',ink:'#fff',border:'#5b95c3'},

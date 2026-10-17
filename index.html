@@ -892,13 +892,13 @@ window.createLoginUI = function (options = {}) {
 /* Interactive vector workflow inspired by the user's supplied 美化.pdf. */
 (function(){
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const paths={moto:'M3 17a4 4 0 1 0 8 0 4 4 0 1 0-8 0 M17 17a4 4 0 1 0 8 0 4 4 0 1 0-8 0 M7 17l6-9 8 9 M10 7h7 M17 4h3l3 7 M7 17h10',cog:'M12 3l2 3 4-1 1 4 3 2-2 3 1 4-4 1-2 3-3-2-4 1-1-4-3-2 2-3-1-4 4-1Z M10 10a4 4 0 1 0 6 6 4 4 0 1 0-6-6',cart:'M2 3h4l3 13h12l3-10H7 M10 21h1 M20 21h1',doc:'M5 2h12l5 5v17H5Z M17 2v6h5 M9 12h9 M9 16h9 M9 20h7',box:'M3 7l10-5 10 5v13l-10 5-10-5Z M3 7l10 6 10-6 M13 13v12 M8 4l10 6v5',bom:'M10 2h6v6h-6Z M2 19h6v6H2Z M10 19h6v6h-6Z M20 19h6v6h-6Z M13 8v6 M5 19v-5h18v5 M13 14v5',truck:'M2 5h14v14H2Z M16 10h5l4 5v4h-9 M5 19a3 3 0 1 0 6 0 M18 19a3 3 0 1 0 6 0',list:'M4 2h18v23H4Z M8 7h2 M13 7h6 M8 12h2 M13 12h6 M8 17h2 M13 17h6 M8 22h10',factory:'M2 25V10l8 5V7l8 6V2h6v23Z M7 20h3 M15 20h3',database:'M3 6c0-5 21-5 21 0s-21 5-21 0 M3 6v15c0 5 21 5 21 0V6 M3 13c0 5 21 5 21 0',stock:'M3 9l6-3 6 3v7l-6 3-6-3Z M14 3l6-3 6 3v7l-6 3-6-3Z M14 19l6-3 6 3v7l-6 3-6-3Z'};
+ const paths={moto:'M3 17a4 4 0 1 0 8 0 4 4 0 1 0-8 0 M17 17a4 4 0 1 0 8 0 4 4 0 1 0-8 0 M7 17l6-9 8 9 M10 7h7 M17 4h3l3 7 M7 17h10',cog:'M12 3l2 3 4-1 1 4 3 2-2 3 1 4-4 1-2 3-3-2-4 1-1-4-3-2 2-3-1-4 4-1Z M10 10a4 4 0 1 0 6 6 4 4 0 1 0-6-6',cart:'M2 3h4l3 13h12l3-10H7 M10 21h1 M20 21h1',doc:'M5 2h12l5 5v17H5Z M17 2v6h5 M9 12h9 M9 16h9 M9 20h7',box:'M3 7l10-5 10 5v13l-10 5-10-5Z M3 7l10 6 10-6 M13 13v12 M8 4l10 6v5',bom:'M10 2h6v6h-6Z M2 19h6v6H2Z M10 19h6v6h-6Z M20 19h6v6h-6Z M13 8v6 M5 19v-5h18v5 M13 14v5',truck:'M2 5h14v14H2Z M16 10h5l4 5v4h-9 M5 19a3 3 0 1 0 6 0 M18 19a3 3 0 1 0 6 0',list:'M4 2h18v23H4Z M8 7h2 M13 7h6 M8 12h2 M13 12h6 M8 17h2 M13 17h6 M8 22h10',factory:'M2 25V10l8 5V7l8 6V2h6v23Z M7 20h3 M15 20h3',database:'M3 6c0-5 21-5 21 0s-21 5-21 0 M3 6v15c0 5 21 5 21 0V6 M3 13c0 5 21 5 21 0',count:'M7 5H4v20h20V5h-3 M9 2h10v6H9Z M8 14l2 2 4-4 M16 14h4 M8 21h12',stock:'M3 9l6-3 6 3v7l-6 3-6-3Z M14 3l6-3 6 3v7l-6 3-6-3Z M14 19l6-3 6 3v7l-6 3-6-3Z'};
  const glyph=(key,x,y,color='#326b9b')=>`<svg x="${x}" y="${y}" width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="${color}" style="color:${color};stroke:${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]||paths.doc}"/></svg>`;
  window.renderWorkflowHome=function(){
  const content=document.querySelector('#content'),style=content&&getComputedStyle(content);
  const width=Math.max(1100,content?content.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2:1600);
  const mobile=window.innerWidth<=800,shellHeight=Math.max(mobile?450:500,window.innerHeight-(mobile?20:24));
- const height=Math.max(920,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.1)-22;
+ const height=Math.max(940,Math.round(1600*Math.max(650,shellHeight-2)/width)),extra=height-920,dbShift=Math.round(extra*.1)-22;
  const lane=i=>748+dbShift+12*i,bottomY=818+dbShift;
 
  const accents={
@@ -911,6 +911,7 @@ window.createLoginUI = function (options = {}) {
   '#388b7c':{fill:'#e7f4f0',ink:'#287266',border:'#b9dace'},
   '#398b7e':{fill:'#dfefe8',ink:'#287266',border:'#b9dace'},
   '#b67b54':{fill:'#f6eee4',ink:'#85633d',border:'#dfceb8'},
+  '#3f8e88':{fill:'#e4f3f0',ink:'#2b786f',border:'#a7cfca'},
   '#408f98':{fill:'#278692',ink:'#fff',border:'#5ca7b0'}
  };
  const theme=color=>accents[color]||accents['#437fb5'];
@@ -935,6 +936,7 @@ window.createLoginUI = function (options = {}) {
  s+=line(`M252.5 704V${lane(3)}H790.5`)+line(`M602 704V${lane(2)}H790.5`)+line(`M772 704V${lane(0)}H790.5`)+line(`M999 704V${lane(0)}H980.5`)+line(`M1169 704V${lane(1)}H980.5`)+line(`M1275 230V${lane(2)}H980.5`)+line(`M1396 704V${lane(3)}H980.5`);
  s+=`<g role="button" tabindex="0" aria-label="出入库明细" data-flow-page="出入库明细" data-flow-module="warehouse" class="workflow-node workflow-summary" transform="translate(60.5 ${dbShift})"><rect x="730" y="740" width="190" height="64" rx="12" fill="url(#flow-summary)" stroke="#4c94bb" stroke-width="1.2"/><path d="M743 743H907" stroke="#c3efff" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/><path d="M743 800H907" stroke="#174f75" stroke-opacity=".25" stroke-width="1.2" stroke-linecap="round"/><g aria-hidden="true"><circle cx="761" cy="772" r="20" fill="#ffffff" fill-opacity=".1" stroke="#daf5ff" stroke-opacity=".22"/><path d="M750 762V782C750 788 772 788 772 782V762Z" fill="#e5f8ff" fill-opacity=".12" stroke="#fff" stroke-width="1.4"/><ellipse cx="761" cy="762" rx="11" ry="4" fill="#dcf7ff" fill-opacity=".35" stroke="#fff" stroke-width="1.4"/><path d="M750 769c0 6 22 6 22 0 M750 776c0 6 22 6 22 0" fill="none" stroke="#fff" stroke-width="1.4"/></g><text x="850" y="779" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="600">出入库明细</text></g>`;
  s+=node('其他入库单',270,bottomY,150,'#437fb5','box','其它出入库','warehouse')+node('其他入库明细',525,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库明细',1045,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库单',1267.5,bottomY,150,'#437fb5','box','其它出入库','warehouse')+line(`M420 ${bottomY+17}H525`)+line(`M1267.5 ${bottomY+17}H1215`)+line(`M695 ${bottomY+17}H770.5V${lane(4)}H790.5`)+line(`M1045 ${bottomY+17}H1000.5V${lane(4)}H980.5`)+line(`M885.5 ${804+dbShift}V${bottomY+14}`)+node('即时库存',805.5,bottomY+20,160,'#408f98','stock','库存查询与货主','warehouse');
+ s+=line(`M885.5 ${bottomY+54}V${bottomY+64}`)+node('仓库盘点',805.5,bottomY+70,160,'#3f8e88','count','仓库盘点','warehouse');
  return s+`<text x="1550" y="${height-3}" text-anchor="end" fill="#7896ac" font-size="11">界面原型 · 示例流程 · 点击节点进入对应模块</text></svg></section>`;
  };
  let navigate=null,resizeTimer=null;

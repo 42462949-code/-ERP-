@@ -135,6 +135,10 @@ body.erp-login-visible>.app{display:none!important}.erp-login{position:fixed;ins
 .workflow-panel-header{filter:drop-shadow(0 2px 3px #24476630)}
 .workflow-panel-title{filter:drop-shadow(0 1px 1px #0003)}
 
+/* Inventory is the result of the complete flow, so its action has a stronger body. */
+.workflow-inventory-result>rect{filter:drop-shadow(0 3px 0 #14515f38) drop-shadow(0 5px 5px #2059682c)}
+.workflow-inventory-result:hover>rect,.workflow-inventory-result:focus-visible>rect{stroke:#b6fcf6;filter:drop-shadow(0 3px 0 #14515f40) drop-shadow(0 6px 6px #20596845)}
+
 /* Sidebar-only soft-blue theme; business pages retain the original light palette. */
 .sidebar{background:linear-gradient(180deg,#284762 0%,#223e57 65%,#26435d 100%);color:#d0e0f1;border-right:1px solid #54789a;box-shadow:5px 0 22px #0003}
 .brand{background:linear-gradient(110deg,#2e506d,#284761);border-bottom:1px solid #6083a3;color:#f2f8ff;position:relative}
@@ -149,20 +153,29 @@ body.erp-login-visible>.app{display:none!important}.erp-login{position:fixed;ins
 .side-footer{background:#254259;border-top-color:#587997;color:#bdd2e5}.side-footer .dot{background:#83d6ca;box-shadow:0 0 6px #19cfb670}
 .session-actions button{background:#385b7b;color:#dfedfa;border-color:#7396b5}
 
-/* One-click editors follow the restored light business-page colors. */
-#content td[data-inline-cell]{cursor:text}#content td:has(>.erp-cell-editor){padding:3px 5px}
+/* Explicit cell editors follow the restored light business-page colors. */
+#content td[data-inline-cell]{cursor:cell}#content td:has(>.erp-cell-editor){padding:3px 5px}
 .erp-cell-editor{font:inherit;width:100%;min-width:80px;padding:5px 6px;border:1px solid #477fc5;border-radius:2px;background:#fff;color:#152b45;outline:none}
 .erp-cell-editor:focus{box-shadow:0 0 0 1px #477fc555}
 @media(max-width:800px){.sidebar.mobile-expanded:after{background:#385b7b;color:#d3e6f7}.sidebar.mobile-expanded .mobileClose{color:#e6f2ff}}
 
 /* A narrower desktop rail gives the worksheet more room without truncating labels. */
 @media(min-width:801px){
- .sidebar{width:210px}
- .main{margin-left:210px;width:calc(100% - 210px)}
+ .sidebar{width:190px}
+ .main{margin-left:190px;width:calc(100% - 190px)}
  .brand{padding:0 10px;gap:6px}
- .brand-image{width:48px;height:48px}
- .nav{padding-left:10px;padding-right:10px}
+ .brand-image{width:40px;height:40px}
+ .brand-caption{font-size:14.5px}
+ .nav{padding-left:8px;padding-right:8px}
+ .nav-main{gap:10px;padding-left:10px;padding-right:10px}
+ .children{margin-left:18px;padding-left:10px}
+ .leaf{padding-left:6px;padding-right:6px}
 }
+
+/* A selected cell is distinct from an open editor. */
+#content td[data-sales-cell],#content td[data-inline-cell]{cursor:cell}
+#content td.erp-grid-cell-selected{outline:none!important;box-shadow:inset 0 0 0 2px #2b7fb3!important;background:#e1eef9!important}
+#content td .sales-cell-editor,#content td .erp-cell-editor{cursor:text}
 
 .erp-table-controls{padding:7px 10px;border-bottom:1px solid #d7e5f0;background:#fff}.erp-table-query{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.erp-table-query-pair{display:flex;gap:4px;flex:1 1 210px;min-width:185px;max-width:360px}.erp-table-query-pair label{display:block;margin:0;min-width:0;font-size:0}.erp-table-query-pair label:first-child{width:46%}.erp-table-query-pair label:last-child{width:54%}.erp-table-query select,.erp-table-query input{font:12px "Microsoft YaHei",sans-serif;width:100%;min-width:0;height:29px;padding:5px 6px;background:white;border:1px solid #c9dcea;border-radius:3px;color:#345773}.erp-table-controls button,.erp-table-layout-dialog button{font:12px "Microsoft YaHei",sans-serif;padding:5px 10px;background:#fff;border:1px solid #c7d9e8;border-radius:4px;color:#466b8b;white-space:nowrap}.erp-table-controls button:hover,.erp-table-layout-dialog button:hover{background:#edf6fc}.erp-table-controls button.erp-table-primary,.erp-table-layout-dialog button.erp-table-primary{background:#427eae;border-color:#427eae;color:#fff}.erp-table-message{margin:5px 0 0;font-size:11px;color:#527a98}.erp-table-scroll{overflow:auto;max-width:100%}.erp-config-table{table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:10pt}.erp-config-table th{position:relative;white-space:normal;cursor:grab;user-select:none;padding:8px 10px;border-right:1px solid #d9e5ef}.erp-config-table td{overflow:hidden;text-overflow:ellipsis;border-right:1px solid #e0eaf3}.erp-config-table td input,.erp-config-table td select{text-align:inherit}.erp-config-table .erp-table-empty td{text-align:center!important;padding:25px;color:#7d95aa}.erp-table-resizer{position:absolute;right:-3px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:2;touch-action:none}.erp-table-resizer:hover{background:#81b3d780}
 .erp-table-dialog-shade{position:fixed;inset:0;z-index:1200;background:#17395845;display:flex;justify-content:flex-end}.erp-table-layout-dialog{width:min(680px,96vw);height:100%;padding:20px;background:white;color:#29445f;display:flex;flex-direction:column;box-shadow:-8px 0 30px #12334f26}.erp-table-layout-dialog header{display:flex;align-items:center;justify-content:space-between;gap:10px}.erp-table-layout-dialog h2{font-size:20px;margin:0}.erp-table-layout-dialog>p{font-size:12px;color:#718ba1;line-height:1.7}.erp-table-layout-items{flex:1;min-height:0;overflow:auto;border:1px solid #d6e3ef}.erp-table-layout-item{display:flex;gap:6px;align-items:center;padding:7px 9px;border-bottom:1px solid #e2ebf3;font-size:12px}.erp-table-layout-item>span{flex:1;min-width:90px}.erp-table-layout-item button{padding:4px 8px}.erp-table-layout-dialog button:disabled{opacity:.4;cursor:default}.erp-table-layout-item label{white-space:nowrap}.erp-table-layout-item input{font:inherit;width:64px;padding:5px;border:1px solid #c5d9e8;border-radius:3px}.erp-table-layout-item select{font:inherit;padding:5px;border:1px solid #c5d9e8;border-radius:3px;background:white;color:#345773}.erp-table-layout-dialog footer{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:10px}.erp-table-layout-dialog .erp-table-layout-error{min-height:18px;color:#b05350;margin:4px 0 0}
@@ -331,7 +344,49 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
 })();
 
 ;
-/* Shared, single-click business-table editing. Local demo changes are scoped by user/page/schema. */
+/* Excel-style single-cell selection, keyboard navigation and explicit editing. */
+(function(){
+ window.ERPGridSelection={bind({table,cells,edit,onSelect=()=>{}}){
+  const selector=cells;let active=null;
+  function select(td,focus=true){
+   if(!td?.isConnected)return;
+   if(active!==td){active?.classList.remove('erp-grid-cell-selected');active?.removeAttribute('aria-selected');}
+   active=td;td.classList.add('erp-grid-cell-selected');td.setAttribute('aria-selected','true');onSelect(td);
+   if(focus){td.focus({preventScroll:true});td.scrollIntoView({block:'nearest',inline:'nearest'});}
+  }
+  function move(td,key,shift=false){
+   if(!td?.isConnected)return;
+   const rows=Array.from(table.tBodies).flatMap(body=>Array.from(body.rows)).filter(tr=>!tr.hidden&&tr.getClientRects().length);
+   const grid=rows.map(tr=>Array.from(tr.querySelectorAll(selector))).filter(row=>row.length);
+   let r=grid.findIndex(row=>row.includes(td));if(r<0)return;let c=grid[r].indexOf(td);
+   if(key==='ArrowUp'||(key==='Enter'&&shift))r=Math.max(0,r-1);
+   else if(key==='ArrowDown'||key==='Enter')r=Math.min(grid.length-1,r+1);
+   else if(key==='ArrowLeft')c=Math.max(0,c-1);
+   else if(key==='ArrowRight')c=Math.min(grid[r].length-1,c+1);
+   else if(key==='Tab'){
+    c+=shift?-1:1;
+    if(c>=grid[r].length){if(r<grid.length-1){r++;c=0;}else c=grid[r].length-1;}
+    if(c<0){if(r>0){r--;c=grid[r].length-1;}else c=0;}
+   }
+   select(grid[r][Math.min(c,grid[r].length-1)]);
+  }
+  table.querySelectorAll(selector).forEach(td=>{
+   td.tabIndex=0;td.onfocus=()=>select(td,false);
+   td.onclick=e=>{if(e.target.closest('input,select,button'))return;select(td);};
+   td.ondblclick=e=>{if(e.target.closest('input,select,button'))return;e.preventDefault();select(td);edit(td);};
+   td.onkeydown=e=>{
+    if(e.target!==td||e.ctrlKey||e.metaKey||e.altKey)return;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab','Enter'].includes(e.key)){e.preventDefault();move(td,e.key,e.shiftKey);}
+    else if(e.key==='F2'){e.preventDefault();edit(td);}
+    else if(e.key==='Process'||e.keyCode===229){edit(td,{replace:true});}
+    else if(e.key.length===1&&!e.isComposing){e.preventDefault();edit(td,{replace:true,text:e.key});}
+   };
+  });
+  return {select,move};
+ }};
+})();
+
+/* Shared, spreadsheet-style business-table editing. Local demo changes are scoped by user/page/schema. */
 (function(){
  const prefix='jingshui.erp.table.edits.v2.';
  const key=(page,headers,user)=>prefix+JSON.stringify([user,page,headers]);
@@ -341,27 +396,33 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
  function save(page,headers,user,row,col,value){const k=key(page,headers,user),saved={...read(k),[`${row}:${col}`]:value};localStorage.setItem(k,JSON.stringify(saved));memory.set(k,saved);}
  function bind({table,rows,headers,onSave,onError,readOnly=false,choices}){
   if(!table)return;
+  const editors=new WeakMap();let selection;
   table.querySelectorAll('tbody tr').forEach((tr,i)=>tr.querySelectorAll('td').forEach((td,j)=>{
    if(!rows[i]||j>=rows[i].length)return;
    const locked=typeof readOnly==='function'?readOnly(i,j):readOnly;td.dataset.inlineCell=`${i}:${j}`;td.tabIndex=0;
-   td.title=locked?'当前账号只读':'单击编辑；Enter 保存，Esc 取消';
-   const edit=()=>{
+   td.title=locked?'当前账号只读':'单击选中；双击或 F2 编辑；直接输入覆盖内容';
+   const edit=(optionsForEdit={})=>{
     if(locked||td.querySelector('input,select'))return;
-    const previous=rows[i][j],options=choices?.(i,j),input=document.createElement(options?'select':'input');input.className='erp-cell-editor';if(options)options.forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value;input.append(option);});input.value=String(previous??'');input.setAttribute('aria-label',`编辑${headers[j]}`);input.maxLength=10000;
-    td.replaceChildren(input);input.focus();input.select?.();let done=false;
+    const previous=rows[i][j],options=choices?.(i,j),input=document.createElement(options?'select':'input');input.className='erp-cell-editor';if(options)options.forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value;input.append(option);});input.value=optionsForEdit.replace&&!options?'':String(previous??'');if(optionsForEdit.text!==undefined&&!options)input.value=optionsForEdit.text;input.setAttribute('aria-label',`编辑${headers[j]}`);input.maxLength=10000;
+    td.replaceChildren(input);input.focus();if(!optionsForEdit.replace)input.select?.();else input.setSelectionRange?.(input.value.length,input.value.length);let done=false;
     async function finish(cancel=false){
      if(done)return;done=true;
      if(cancel){td.textContent=String(previous??'');td.focus();return;}
      let value=input.value;
      try{
       if(typeof previous==='number'){if(!/^\d+(?:\.\d{1,6})?$/.test(value.trim())||!Number.isFinite(Number(value))||Number(value)>1e12)throw Error('请输入有效的非负数字，最多6位小数。');value=Number(value);}
-      input.disabled=true;await onSave(i,j,value);td.textContent=String(value);td.dispatchEvent(new CustomEvent('erp-cell-saved',{bubbles:true}));
-     }catch(e){td.textContent=String(previous??'');onError?.(e.message);}
+      input.disabled=true;await onSave(i,j,value);td.textContent=String(value);td.dispatchEvent(new CustomEvent('erp-cell-saved',{bubbles:true}));return true;
+     }catch(e){td.textContent=String(previous??'');onError?.(e.message);return false;}
     }
-    input.onblur=()=>finish();input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();finish();}if(e.key==='Escape'){e.preventDefault();finish(true);}};
+    input.onblur=()=>finish();input.onkeydown=async e=>{
+     if(e.isComposing||e.keyCode===229)return;
+     if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();e.stopPropagation();if(await finish())selection.move(td,e.key,e.shiftKey);else selection.select(td);}
+     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();await finish(true);selection.select(td);}
+    };
    };
-   td.onclick=edit;td.onkeydown=e=>{if(e.target===td&&e.key==='Enter'){e.preventDefault();edit();}};
+   editors.set(td,edit);
   }));
+  selection=window.ERPGridSelection.bind({table,cells:'[data-inline-cell]',edit:(td,options)=>editors.get(td)?.(options)});
  }
  window.ERPTableEdits={apply,save,bind};
 })();
@@ -687,18 +748,19 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     const renderDrawer = () => !drawerOpen?'':`<div class="sales-modal-shade" data-sales-dismiss><section class="sales-layout-dialog" role="dialog" aria-modal="true" aria-label="列设置"><header><h2>列设置</h2><button data-sales-close aria-label="关闭列设置">×</button></header><p>上下调整顺序，设置宽度（10–600px）与对齐方式。保存后在此浏览器自动恢复。</p><div class="sales-layout-items">${draftLayout.map((c,i)=>`<div class="sales-layout-item" data-layout-key="${escape(c.key)}"><span>${i+1}. ${escape(column(c.key).label)}</span><button data-move="up" data-index="${i}" ${i===0?'disabled':''} aria-label="上移${escape(column(c.key).label)}">↑</button><button data-move="down" data-index="${i}" ${i===draftLayout.length-1?'disabled':''} aria-label="下移${escape(column(c.key).label)}">↓</button><label>宽度 <input type="number" min="10" max="600" value="${c.width}" data-layout-width="${escape(c.key)}" aria-label="${escape(column(c.key).label)}宽度"></label><label>对齐 <select data-layout-align="${escape(c.key)}" aria-label="${escape(column(c.key).label)}对齐">${[['left','左对齐'],['center','居中'],['right','右对齐']].map(([v,t])=>`<option value="${v}" ${c.align===v?'selected':''}>${t}</option>`).join('')}</select></label></div>`).join('')}</div><footer><button data-sales-center-all>整表居中</button><button data-sales-default-layout>恢复默认</button><button data-sales-close>取消</button><button class="sales-primary" data-sales-save-layout>保存设置</button></footer></section></div>`;
     function render(){
       const showing=visibleRows();
-      return `<section class="sales-workspace" aria-label="销售订单明细工作区"><div class="sales-heading"><h1>销售订单明细表</h1><span>本地演示 · ${readOnly?'当前账号只读':'单击单元格编辑'} · 数据不会上传服务器</span></div><div class="sales-sheet"><div class="sales-tabs" role="tablist">${['全部','待审核','已审核','草稿'].map(t=>`<button role="tab" aria-selected="${tab===t}" class="${tab===t?'active':''}" data-sales-tab="${t}">${t}</button>`).join('')}<div class="sales-tools"><button data-sales-import ${readOnly?'disabled':''}>上传 Excel</button><button data-sales-export>下载 Excel</button><button data-sales-layout>列设置</button><input type="file" data-sales-file accept=".xlsx,.xls" hidden></div></div><form class="sales-query" data-sales-query>${filters.map((f,i)=>`<div class="sales-query-pair"><label class="sales-sr" for="sales-field-${i}">查询条件${i+1}</label><select id="sales-field-${i}" data-sales-filter-key="${i}">${options(f.key)}</select><label class="sales-sr" for="sales-value-${i}">查询内容${i+1}</label><input id="sales-value-${i}" data-sales-filter-text="${i}" value="${escape(f.text)}" placeholder="查询内容 ${i+1}"></div>`).join('')}<button class="sales-primary" type="submit">查询</button><button type="button" data-sales-reset>重置</button></form>${notice||storageWarning?`<div class="sales-notice" role="status">${escape(notice)} ${escape(storageWarning)}<button data-sales-notice-close aria-label="关闭提示">×</button></div>`:''}<div class="sales-grid-scroller" tabindex="0" aria-label="可编辑订单表格，左右滚动查看更多列"><table class="sales-edit-grid" style="width:${layout.reduce((a,c)=>a+c.width,0)}px"><colgroup>${layout.map(c=>`<col data-sales-col="${escape(c.key)}" style="width:${c.width}px">`).join('')}</colgroup><thead><tr>${layout.map(c=>`<th scope="col" draggable="true" data-sales-header="${escape(c.key)}" style="text-align:${c.align}" title="拖动换序；拖动右边界改宽">${escape(column(c.key).label)}<span class="sales-resizer" data-sales-resize="${escape(c.key)}" role="separator" aria-orientation="vertical" aria-label="调整${escape(column(c.key).label)}列宽"></span></th>`).join('')}</tr></thead><tbody>${showing.map(r=>`<tr data-sales-row="${escape(r.id)}" class="${r.id===selectedRow?'sales-selected-row':''}">${layout.map(c=>`<td tabindex="0" data-sales-cell="${escape(c.key)}" data-row-id="${escape(r.id)}" style="text-align:${c.align}" class="${r.manual.includes(c.key)?'sales-manual':''}" title="${escape(r.values[c.key])}${r.manual.includes(c.key)?'（手工覆盖公式）':''}">${escape(displayCell(column(c.key),r.values[c.key]))}</td>`).join('')}</tr>`).join('')}${showing.length?'':`<tr><td colspan="${schema.length}" class="sales-empty">没有符合条件的记录</td></tr>`}</tbody></table></div><div class="sales-bottom"><span>${showing.length} / ${rows.length} 行 · 单击单元格编辑${selectedRow?' · 已选择一行':''}</span><button data-sales-restore-formulas ${selectedRow&&!readOnly?'':'disabled'}>恢复选中行公式</button></div><details class="sales-formula-help"><summary>计算规则与本地保存说明</summary><p>未出货数＝（正式订单数量大于 0 时取正式数量，否则取预测数量）－已出货数；未完工数＝工单数量－已生产数；生产进度＝已生产数÷工单数量×100%，工单为 0 时为 0%。数量最多 3 位小数、单价最多 6 位小数。拒绝超发和超产。公式格可手工覆盖，带“手改”标记；选中行后可恢复公式。仅保存于当前浏览器，不是服务器数据；清理浏览器数据会丢失，请下载 Excel 备份。导出的是全部订单，不受查询条件影响。</p></details></div>${renderDrawer()}${pendingImport?`<div class="sales-modal-shade"><section class="sales-import-dialog" role="dialog" aria-modal="true" aria-label="确认导入"><h2>确认替换本地订单</h2><p>文件已通过 36 列及全部 ${pendingImport.length} 行校验。将替换当前 ${rows.length} 行本地数据，不会合并，也不会上传服务器。</p><p>建议先取消并下载现有 Excel 备份。此操作不改变列布局。</p><button data-sales-import-cancel>取消</button><button class="sales-primary" data-sales-import-confirm>确认替换本地数据</button></section></div>`:''}</section>`;
+      return `<section class="sales-workspace" aria-label="销售订单明细工作区"><div class="sales-heading"><h1>销售订单明细表</h1><span>本地演示 · ${readOnly?'当前账号只读':'单击选中 · 双击或 F2 编辑'} · 数据不会上传服务器</span></div><div class="sales-sheet"><div class="sales-tabs" role="tablist">${['全部','待审核','已审核','草稿'].map(t=>`<button role="tab" aria-selected="${tab===t}" class="${tab===t?'active':''}" data-sales-tab="${t}">${t}</button>`).join('')}<div class="sales-tools"><button data-sales-import ${readOnly?'disabled':''}>上传 Excel</button><button data-sales-export>下载 Excel</button><button data-sales-layout>列设置</button><input type="file" data-sales-file accept=".xlsx,.xls" hidden></div></div><form class="sales-query" data-sales-query>${filters.map((f,i)=>`<div class="sales-query-pair"><label class="sales-sr" for="sales-field-${i}">查询条件${i+1}</label><select id="sales-field-${i}" data-sales-filter-key="${i}">${options(f.key)}</select><label class="sales-sr" for="sales-value-${i}">查询内容${i+1}</label><input id="sales-value-${i}" data-sales-filter-text="${i}" value="${escape(f.text)}" placeholder="查询内容 ${i+1}"></div>`).join('')}<button class="sales-primary" type="submit">查询</button><button type="button" data-sales-reset>重置</button></form>${notice||storageWarning?`<div class="sales-notice" role="status">${escape(notice)} ${escape(storageWarning)}<button data-sales-notice-close aria-label="关闭提示">×</button></div>`:''}<div class="sales-grid-scroller" tabindex="0" aria-label="可编辑订单表格，左右滚动查看更多列"><table class="sales-edit-grid" style="width:${layout.reduce((a,c)=>a+c.width,0)}px"><colgroup>${layout.map(c=>`<col data-sales-col="${escape(c.key)}" style="width:${c.width}px">`).join('')}</colgroup><thead><tr>${layout.map(c=>`<th scope="col" draggable="true" data-sales-header="${escape(c.key)}" style="text-align:${c.align}" title="拖动换序；拖动右边界改宽">${escape(column(c.key).label)}<span class="sales-resizer" data-sales-resize="${escape(c.key)}" role="separator" aria-orientation="vertical" aria-label="调整${escape(column(c.key).label)}列宽"></span></th>`).join('')}</tr></thead><tbody>${showing.map(r=>`<tr data-sales-row="${escape(r.id)}" class="${r.id===selectedRow?'sales-selected-row':''}">${layout.map(c=>`<td tabindex="0" data-sales-cell="${escape(c.key)}" data-row-id="${escape(r.id)}" style="text-align:${c.align}" class="${r.manual.includes(c.key)?'sales-manual':''}" title="${escape(r.values[c.key])}${r.manual.includes(c.key)?'（手工覆盖公式）':''}">${escape(displayCell(column(c.key),r.values[c.key]))}</td>`).join('')}</tr>`).join('')}${showing.length?'':`<tr><td colspan="${schema.length}" class="sales-empty">没有符合条件的记录</td></tr>`}</tbody></table></div><div class="sales-bottom"><span>${showing.length} / ${rows.length} 行 · 单击选中 · 双击或 F2 编辑${selectedRow?' · 已选择一行':''}</span><button data-sales-restore-formulas ${selectedRow&&!readOnly?'':'disabled'}>恢复选中行公式</button></div><details class="sales-formula-help"><summary>计算规则与本地保存说明</summary><p>未出货数＝（正式订单数量大于 0 时取正式数量，否则取预测数量）－已出货数；未完工数＝工单数量－已生产数；生产进度＝已生产数÷工单数量×100%，工单为 0 时为 0%。数量最多 3 位小数、单价最多 6 位小数。拒绝超发和超产。公式格可手工覆盖，带“手改”标记；选中行后可恢复公式。仅保存于当前浏览器，不是服务器数据；清理浏览器数据会丢失，请下载 Excel 备份。导出的是全部订单，不受查询条件影响。</p></details></div>${renderDrawer()}${pendingImport?`<div class="sales-modal-shade"><section class="sales-import-dialog" role="dialog" aria-modal="true" aria-label="确认导入"><h2>确认替换本地订单</h2><p>文件已通过 36 列及全部 ${pendingImport.length} 行校验。将替换当前 ${rows.length} 行本地数据，不会合并，也不会上传服务器。</p><p>建议先取消并下载现有 Excel 备份。此操作不改变列布局。</p><button data-sales-import-cancel>取消</button><button class="sales-primary" data-sales-import-confirm>确认替换本地数据</button></section></div>`:''}</section>`;
     }
     const root = () => document.querySelector('.sales-workspace');
     const say = msg => {notice=msg;refresh();};
     const captureFilters = () => {const el=root();filters=filters.map((f,i)=>({key:el.querySelector(`[data-sales-filter-key="${i}"]`).value,text:el.querySelector(`[data-sales-filter-text="${i}"]`).value}));};
-    function edit(td) {
+    let selection;
+    function edit(td,options={}) {
       if(readOnly||td.querySelector('input'))return;
       const row=rows.find(r=>r.id===td.dataset.rowId),c=column(td.dataset.salesCell); if(!row||!c)return;
       selectedRow=row.id;
       const previous=row.values[c.key];
-      const input=document.createElement('input');input.className='sales-cell-editor';input.value=previous;input.setAttribute('aria-label',`编辑${c.label}`);input.type='text';input.style.textAlign=td.style.textAlign; if(c.type==='number')input.inputMode='decimal';
-      td.textContent='';td.append(input);input.focus();input.select();let done=false;
+      const input=document.createElement('input');input.className='sales-cell-editor';input.value=options.replace?'':previous;if(options.text!==undefined)input.value=options.text;input.setAttribute('aria-label',`编辑${c.label}`);input.type='text';input.style.textAlign=td.style.textAlign; if(c.type==='number')input.inputMode='decimal';
+      td.textContent='';td.append(input);input.focus();if(options.replace)input.setSelectionRange(input.value.length,input.value.length);else input.select();let done=false;
       function paintNotice(){
         let el=root().querySelector('.sales-notice');const message=[notice,storageWarning].filter(Boolean).join(' ');
         if(!message){el?.remove();return;}
@@ -709,10 +771,14 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
           const next={...row,values:{...row.values},manual:[...row.manual]};next.values[c.key]=validateCell(c,input.value);
           if(FORMULAS.includes(c.key)&&!next.manual.includes(c.key)&&next.values[c.key]!==previous)next.manual.push(c.key);
           calculate(next);rows=rows.map(r=>r.id===row.id?next:r);persist();notice='';
-          td.closest('tr').querySelectorAll('[data-sales-cell]').forEach(cell=>{const key=cell.dataset.salesCell;cell.textContent=displayCell(column(key),next.values[key]);cell.classList.toggle('sales-manual',next.manual.includes(key));cell.title=next.values[key]+(next.manual.includes(key)?'（手工覆盖公式）':'');});paintNotice();
-        }catch(e){td.textContent=displayCell(c,previous);notice=`${c.label}未保存：${e.message}`;paintNotice();}
+          td.closest('tr').querySelectorAll('[data-sales-cell]').forEach(cell=>{const key=cell.dataset.salesCell;cell.textContent=displayCell(column(key),next.values[key]);cell.classList.toggle('sales-manual',next.manual.includes(key));cell.title=next.values[key]+(next.manual.includes(key)?'（手工覆盖公式）':'');});paintNotice();return true;
+        }catch(e){td.textContent=displayCell(c,previous);notice=`${c.label}未保存：${e.message}`;paintNotice();return false;}
       }
-      input.addEventListener('blur',()=>save());input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();td.focus();}if(e.key==='Escape'){e.preventDefault();save(true);td.focus();}});
+      input.addEventListener('blur',()=>save());input.addEventListener('keydown',e=>{
+        if(e.isComposing||e.keyCode===229)return;
+        if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();e.stopPropagation();if(save())selection.move(td,e.key,e.shiftKey);else selection.select(td);}
+        if(e.key==='Escape'){e.preventDefault();e.stopPropagation();save(true);selection.select(td);}
+      });
     }
     async function importFile(file) {
       if(readOnly||!file)return;
@@ -746,7 +812,9 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
       el.querySelectorAll('[data-sales-tab]').forEach(b=>b.onclick=()=>{captureFilters();tab=b.dataset.salesTab;refresh();});
       el.querySelector('[data-sales-query]').onsubmit=e=>{e.preventDefault();captureFilters();appliedFilters=filters.map(f=>({...f}));refresh();};
       el.querySelector('[data-sales-reset]').onclick=()=>{filters=Array.from({length:4},()=>({key:'all',text:''}));appliedFilters=filters.map(f=>({...f}));refresh();};
-      el.querySelectorAll('[data-sales-cell]').forEach(td=>{td.onkeydown=e=>{if(e.key==='Enter'&&!e.target.matches('input')){e.preventDefault();edit(td);}};td.onclick=()=>{selectedRow=td.dataset.rowId;el.querySelectorAll('[data-sales-row]').forEach(tr=>tr.classList.toggle('sales-selected-row',tr.dataset.salesRow===selectedRow));el.querySelector('[data-sales-restore-formulas]').disabled=readOnly;edit(td);};});
+      selection=window.ERPGridSelection.bind({table:el.querySelector('.sales-edit-grid'),cells:'[data-sales-cell]',edit,onSelect:td=>{
+        selectedRow=td.dataset.rowId;el.querySelectorAll('[data-sales-row]').forEach(tr=>tr.classList.toggle('sales-selected-row',tr.dataset.salesRow===selectedRow));el.querySelector('[data-sales-restore-formulas]').disabled=readOnly;
+      }});
       el.querySelector('[data-sales-restore-formulas]').onclick=()=>{if(readOnly)return;const row=rows.find(r=>r.id===selectedRow);if(!row)return;row.manual=[];calculate(row);persist();say('选中行已恢复自动公式。');};
       el.querySelector('[data-sales-layout]').onclick=()=>{captureFilters();draftLayout=layout.map(c=>({...c}));drawerOpen=true;refresh();requestAnimationFrame(()=>root()?.querySelector('[data-sales-close]')?.focus());};
       el.querySelectorAll('[data-sales-close]').forEach(b=>b.onclick=()=>{drawerOpen=false;refresh();});
@@ -912,7 +980,7 @@ window.createLoginUI = function (options = {}) {
  function renderPermissions(){return `<section class="erp-user-panel"><h2>角色权限</h2><p>${server?'权限由后端统一校验。':'公开演示仅展示权限模型，前端权限不能用于保护真实数据。'}</p><div id="authPermissionList">加载中…</div></section>`;}
  async function bindPermissions(){
    const el=document.getElementById('authPermissionList');if(!el)return;
-   try{if(server){const result=await request('/api/permissions');el.innerHTML=`<table><thead><tr><th>角色</th><th>角色编码</th><th>业务权限</th></tr></thead><tbody>${result.roles.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td>${esc(r.actions.join('、'))}</td></tr>`).join('')}</tbody></table>`;}else el.innerHTML=`<table><thead><tr><th>角色</th><th>业务权限</th><th>账号管理</th></tr></thead><tbody><tr><td>系统管理员</td><td>查询、新增、编辑、导入导出、审核演示</td><td>新增、修改、停用、重置本机账号</td></tr><tr><td>业务操作员</td><td>查询、新增、编辑、导入导出演示</td><td>仅修改本人密码</td></tr><tr><td>只读用户</td><td>查询、导出演示</td><td>仅修改本人密码</td></tr></tbody></table>`;window.ERPTableView.mount({table:el.querySelector('table'),tableId:'角色权限',userId:user.id});}catch(error){el.textContent=error.message;}
+   try{if(server){const result=await request('/api/permissions');el.innerHTML=`<table><thead><tr><th>角色</th><th>角色编码</th><th>业务权限</th></tr></thead><tbody>${result.roles.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td>${esc(r.actions.join('、'))}</td></tr>`).join('')}</tbody></table>`;}else el.innerHTML=`<table><thead><tr><th>角色</th><th>业务权限</th><th>账号管理</th></tr></thead><tbody><tr><td>系统管理员</td><td>查询、新增、编辑、导入导出、审核演示</td><td>新增、修改、停用、重置本机账号</td></tr><tr><td>业务操作员</td><td>查询、新增、编辑、导入导出演示</td><td>仅修改本人密码</td></tr><tr><td>只读用户</td><td>查询、导出演示</td><td>仅修改本人密码</td></tr></tbody></table>`;window.ERPGridSelection.bind({table:el.querySelector('table'),cells:'tbody td',edit:()=>{}});window.ERPTableView.mount({table:el.querySelector('table'),tableId:'角色权限',userId:user.id});}catch(error){el.textContent=error.message;}
  }
  return {init,show,logout,getUser:()=>user,renderUsers,bindUsers,renderPermissions,bindPermissions,changePassword};
 };
@@ -960,9 +1028,10 @@ window.createLoginUI = function (options = {}) {
  // Existing slot centers keep column alignment; fitted widths follow the rendered label.
  const fitWidth=label=>Math.max(104,Math.ceil(measure.measureText(label).width)+64);
  const node=(label,x,y,w,color,icon,page,mod,minWidth=0)=>{const base=nodeColors[color]||nodeColors['#437fb5'],cx=x+w/2;w=Math.max(minWidth,fitWidth(label));x=cx-w/2;const textWidth=measure.measureText(label).width,contentX=cx-(22+8+textWidth)/2;boxes.set(label,{x,y,w,cx});return `<g class="workflow-node" role="button" tabindex="0" aria-label="${esc(label)}" data-flow-page="${esc(page||label)}" data-flow-module="${mod||'warehouse'}"><rect x="${x}" y="${y}" width="${w}" height="38" rx="8" fill="url(#flow-node-${color.slice(1)})" stroke="${tint(base,26)}"/><path d="M${x+9} ${y+2}H${x+w-9}" stroke="#fff" stroke-opacity=".4" stroke-width="1" stroke-linecap="round"/><circle cx="${contentX+11}" cy="${y+19}" r="11" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".24"/>${glyph(icon,contentX+2,y+10,'#fff',18)}<text x="${contentX+30+textWidth/2}" y="${y+17.5}" dominant-baseline="central" text-anchor="middle" fill="#fff" font-size="17" font-weight="600" font-family="Microsoft YaHei,sans-serif">${esc(label)}</text></g>`;};
+ const inventoryResult=(cx,y)=>{measure.font='700 20px "Microsoft YaHei",sans-serif';const tw=measure.measureText('即时库存').width,gx=cx-(32+10+tw)/2;measure.font='600 17px "Microsoft YaHei",sans-serif';return `<g class="workflow-node workflow-inventory-result" role="button" tabindex="0" aria-label="即时库存" data-flow-page="库存查询与货主" data-flow-module="warehouse"><rect x="${cx-89}" y="${y}" width="178" height="46" rx="11" fill="url(#flow-inventory-result)" stroke="#65b7bf" stroke-width="1.2"/><path d="M${cx-77} ${y+2}H${cx+77}" stroke="#dbffff" stroke-opacity=".65" stroke-width="1.2" stroke-linecap="round"/><path d="M${cx-77} ${y+43}H${cx+77}" stroke="#125b68" stroke-opacity=".65" stroke-width="1.7" stroke-linecap="round"/><circle cx="${gx+16}" cy="${y+23}" r="16" fill="#d2ffff" fill-opacity=".12" stroke="#d2ffff" stroke-opacity=".5"/>${glyph('stock',gx+4,y+11,'#efffff',24)}<text x="${gx+42+tw/2}" y="${y+21.5}" dominant-baseline="central" text-anchor="middle" fill="#fff" font-size="20" font-weight="700" font-family="Microsoft YaHei,sans-serif">即时库存</text></g>`;};
  const line=(d,color='#688fa9',arrow=true)=>`<path d="${d}" fill="none" stroke="${color}" stroke-width="1.75"${arrow?' marker-end="url(#flow-arrow)"':''}/>`;
  const panel=(name,x,y,w,h,color)=>{const t=panelThemes[color];return `<g class="workflow-panel"><rect class="workflow-panel-body" x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="#fff" stroke="${t.border}" stroke-opacity=".65" stroke-width="1"/><path class="workflow-panel-header" d="M${x+7} ${y}H${x+w-7}Q${x+w} ${y} ${x+w} ${y+7}V${y+34}H${x}V${y+7}Q${x} ${y} ${x+7} ${y}" fill="url(#flow-panel-${color.slice(1)})" stroke="${t.border}" stroke-width=".8"/><path d="M${x+10} ${y+2}H${x+w-10}" stroke="#fff" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round"/><path d="M${x+1} ${y+33}H${x+w-1}" stroke="${t.bottom}" stroke-width="2"/><text class="workflow-panel-title" x="${x+w/2}" y="${y+17}" dominant-baseline="central" text-anchor="middle" fill="#fff" font-size="21" font-weight="600">${name}</text></g>`;};
- let s=`<section class="workflow-shell" aria-label="数据化管理系统主流程图"><svg class="workflow-svg" viewBox="0 0 1600 ${height}" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="销售、工程、MRP、采购、委外、生产、受托及仓库业务流程"><defs>${nodeGradients}${panelGradients}<linearGradient id="flow-trace"><stop stop-color="#6eadd2"/><stop offset=".5" stop-color="#3182b2"/><stop offset="1" stop-color="#a0c7dc"/></linearGradient><linearGradient id="flow-bg" x2="0" y2="1"><stop stop-color="#f6fafd"/><stop offset=".7" stop-color="#f0f6fb"/><stop offset="1" stop-color="#e7f0f8"/></linearGradient><radialGradient id="flow-glow"><stop stop-color="#a7cee5" stop-opacity=".6"/><stop offset="1" stop-color="#e9f3fa" stop-opacity="0"/></radialGradient><linearGradient id="flow-summary" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#479cc7"/><stop offset=".5" stop-color="#317fac"/><stop offset="1" stop-color="#266990"/></linearGradient><linearGradient id="flow-summary-edge"><stop stop-color="#3ca4d6"/><stop offset=".5" stop-color="#91f4ff"/><stop offset="1" stop-color="#3c86be"/></linearGradient><linearGradient id="flow-summary-icon"><stop stop-color="#218fcd"/><stop offset=".45" stop-color="#5de6fa"/><stop offset="1" stop-color="#1473ab"/></linearGradient><linearGradient id="flow-db" x2="1"><stop stop-color="#1877b5"/><stop offset=".5" stop-color="#38a7cf"/><stop offset="1" stop-color="#227bb4"/></linearGradient><marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 6 3 0 6 2 3Z" fill="#688fa9"/></marker><pattern id="flow-grid" width="45" height="30" patternUnits="userSpaceOnUse"><path d="M45 0H0V30" fill="none" stroke="#b6cfdf" stroke-opacity=".28"/></pattern></defs><rect width="1600" height="${height}" fill="url(#flow-bg)"/><ellipse cx="800" cy="${height-90}" rx="800" ry="140" fill="url(#flow-glow)"/><path d="M0 ${height-120}H1600V${height}H0Z" fill="url(#flow-grid)"/><path d="M15 125V${height-12}H1585V125L1570 110H30Z" fill="none" stroke="#a8c4d8" stroke-width="1.25"/><path d="M24 128V${height-20}H1576V128L1563 119H37Z" fill="none" stroke="#c4dce9" stroke-width=".65"/><g fill="none" stroke-linecap="square"><path d="M30 30H285L330 65H530 M1570 30H1315L1270 65H1070" stroke="url(#flow-trace)" stroke-width="2"/><path d="M30 24H288L336 58H506 M1570 24H1312L1264 58H1094" stroke="#9cbdd3" stroke-width="1"/><path d="M38 38H270L315 73H454 M1562 38H1330L1285 73H1146" stroke="#6e9dbb" stroke-opacity=".5" stroke-width=".7"/><path d="M455 65h28m8 0h12m8 0h6 M1145 65h-28m-8 0h-12m-8 0h-6" stroke="#5693ba" stroke-width="2"/><path d="M15 155v-30l15-15h46 M1585 155v-30l-15-15h-46 M15 ${height-60}v48h48 M1585 ${height-60}v48h-48" stroke="#78a7c5" stroke-width="2"/></g><g fill="#5693ba" stroke="none"><circle cx="30" cy="30" r="2"/><circle cx="530" cy="65" r="2"/><circle cx="1570" cy="30" r="2"/><circle cx="1070" cy="65" r="2"/></g><text x="800" y="45" text-anchor="middle" fill="#244766" font-size="30" font-weight="700">精税工贸ERP系统</text><text x="800" y="82" text-anchor="middle" fill="#62839b" font-size="20" font-weight="600">数据化管理系统主流程图</text><g role="button" tabindex="0" data-flow-close aria-label="关闭流程图" class="workflow-node"><rect x="1468" y="46" width="80" height="28" rx="5" fill="#f7fafc" stroke="#c5d8e5"/><text x="1508" y="63.5" fill="#59768d" text-anchor="middle" font-size="16">关闭 ×</text></g>`;
+ let s=`<section class="workflow-shell" aria-label="数据化管理系统主流程图"><svg class="workflow-svg" viewBox="0 0 1600 ${height}" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="销售、工程、MRP、采购、委外、生产、受托及仓库业务流程"><defs>${nodeGradients}${panelGradients}<linearGradient id="flow-inventory-result" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#58b5b8"/><stop offset=".5" stop-color="#278e99"/><stop offset="1" stop-color="#146774"/></linearGradient><linearGradient id="flow-trace"><stop stop-color="#6eadd2"/><stop offset=".5" stop-color="#3182b2"/><stop offset="1" stop-color="#a0c7dc"/></linearGradient><linearGradient id="flow-bg" x2="0" y2="1"><stop stop-color="#f6fafd"/><stop offset=".7" stop-color="#f0f6fb"/><stop offset="1" stop-color="#e7f0f8"/></linearGradient><radialGradient id="flow-glow"><stop stop-color="#a7cee5" stop-opacity=".6"/><stop offset="1" stop-color="#e9f3fa" stop-opacity="0"/></radialGradient><linearGradient id="flow-summary" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#479cc7"/><stop offset=".5" stop-color="#317fac"/><stop offset="1" stop-color="#266990"/></linearGradient><linearGradient id="flow-summary-edge"><stop stop-color="#3ca4d6"/><stop offset=".5" stop-color="#91f4ff"/><stop offset="1" stop-color="#3c86be"/></linearGradient><linearGradient id="flow-summary-icon"><stop stop-color="#218fcd"/><stop offset=".45" stop-color="#5de6fa"/><stop offset="1" stop-color="#1473ab"/></linearGradient><linearGradient id="flow-db" x2="1"><stop stop-color="#1877b5"/><stop offset=".5" stop-color="#38a7cf"/><stop offset="1" stop-color="#227bb4"/></linearGradient><marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 6 3 0 6 2 3Z" fill="#688fa9"/></marker><pattern id="flow-grid" width="45" height="30" patternUnits="userSpaceOnUse"><path d="M45 0H0V30" fill="none" stroke="#b6cfdf" stroke-opacity=".28"/></pattern></defs><rect width="1600" height="${height}" fill="url(#flow-bg)"/><ellipse cx="800" cy="${height-90}" rx="800" ry="140" fill="url(#flow-glow)"/><path d="M0 ${height-120}H1600V${height}H0Z" fill="url(#flow-grid)"/><path d="M15 125V${height-12}H1585V125L1570 110H30Z" fill="none" stroke="#a8c4d8" stroke-width="1.25"/><path d="M24 128V${height-20}H1576V128L1563 119H37Z" fill="none" stroke="#c4dce9" stroke-width=".65"/><g fill="none" stroke-linecap="square"><path d="M30 30H285L330 65H530 M1570 30H1315L1270 65H1070" stroke="url(#flow-trace)" stroke-width="2"/><path d="M30 24H288L336 58H506 M1570 24H1312L1264 58H1094" stroke="#9cbdd3" stroke-width="1"/><path d="M38 38H270L315 73H454 M1562 38H1330L1285 73H1146" stroke="#6e9dbb" stroke-opacity=".5" stroke-width=".7"/><path d="M455 65h28m8 0h12m8 0h6 M1145 65h-28m-8 0h-12m-8 0h-6" stroke="#5693ba" stroke-width="2"/><path d="M15 155v-30l15-15h46 M1585 155v-30l-15-15h-46 M15 ${height-60}v48h48 M1585 ${height-60}v48h-48" stroke="#78a7c5" stroke-width="2"/></g><g fill="#5693ba" stroke="none"><circle cx="30" cy="30" r="2"/><circle cx="530" cy="65" r="2"/><circle cx="1570" cy="30" r="2"/><circle cx="1070" cy="65" r="2"/></g><text x="800" y="45" text-anchor="middle" fill="#244766" font-size="30" font-weight="700">精税工贸ERP系统</text><text x="800" y="82" text-anchor="middle" fill="#62839b" font-size="20" font-weight="600">数据化管理系统主流程图</text><g role="button" tabindex="0" data-flow-close aria-label="关闭流程图" class="workflow-node"><rect x="1468" y="46" width="80" height="28" rx="5" fill="#f7fafc" stroke="#c5d8e5"/><text x="1508" y="63.5" fill="#59768d" text-anchor="middle" font-size="16">关闭 ×</text></g>`;
  s+=node('摩电销售订单',337,128,230,'#3e78ad','moto','销售订单明细表','sales')+node('通用机销售订单',584.5,128,235,'#3e78ad','cog','销售订单明细表','sales')+node('摩电零售销售订单',824.5,128,255,'#3e78ad','moto','销售订单明细表','sales')+node('销售订单汇总表',579.5,196,245,'#3e78ad','cog','销售订单明细表','sales')+node('送货单',842,196,180,'#3e78ad','truck','销售出货计划','sales')+node('出货明细',1175,196,200,'#3e78ad','list','销售出货对账','sales');
  s+=node('物品资料',224.5,257,175,'#706bb1','box','物品资料','engineering')+node('BOM表',424.5,257,165,'#706bb1','bom','BOM 表','engineering')+node('MRP运算',574.5,257,255,'#706bb1','cog','MRP 物料需求计算','plan');
  s+=line('M452 166V181H952V166',undefined,false)+line('M702 166V196')+line(`M${right('销售订单汇总表')} 215H${left('送货单')}`)+line(`M${right('送货单')} 215H${left('出货明细')}`)+line('M702 234V257')+line(`M${right('物品资料')} 276H${left('BOM表')}`)+line(`M${right('BOM表')} 276H${left('MRP运算')}`)+line('M702 295V310H267.5V326')+line('M702 295V326')+line('M702 310H1084V326');
@@ -983,8 +1052,8 @@ window.createLoginUI = function (options = {}) {
  s+=line(`M267.5 708V${lane(3)}H798`)+line(`M617 708V${lane(2)}H798`)+line(`M787 708V${lane(0)}H798`)+line(`M999 708V${lane(0)}H988`)+line(`M1169 708V${lane(1)}H988`)+line(`M1275 254V${lane(2)}H988`)+line(`M1396 708V${lane(3)}H988`);
  measure.font='600 19px "Microsoft YaHei",sans-serif';const summaryTextWidth=measure.measureText('出入库明细').width,summaryContentX=825-(40+10+summaryTextWidth)/2;measure.font='600 17px "Microsoft YaHei",sans-serif';
  s+=`<g role="button" tabindex="0" aria-label="出入库明细" data-flow-page="出入库明细" data-flow-module="warehouse" class="workflow-node workflow-summary" transform="translate(68 ${dbShift})"><rect x="730" y="740" width="190" height="64" rx="12" fill="url(#flow-summary)" stroke="#4c94bb" stroke-width="1.2"/><path d="M743 743H907" stroke="#c3efff" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/><path d="M743 800H907" stroke="#174f75" stroke-opacity=".25" stroke-width="1.2" stroke-linecap="round"/><g class="workflow-summary-icon" aria-hidden="true" transform="translate(${summaryContentX+20-761} 0)"><circle cx="761" cy="772" r="20" fill="#ffffff" fill-opacity=".1" stroke="#daf5ff" stroke-opacity=".22"/><path d="M750 762V782C750 788 772 788 772 782V762Z" fill="#e5f8ff" fill-opacity=".12" stroke="#fff" stroke-width="1.4"/><ellipse cx="761" cy="762" rx="11" ry="4" fill="#dcf7ff" fill-opacity=".35" stroke="#fff" stroke-width="1.4"/><path d="M750 769c0 6 22 6 22 0 M750 776c0 6 22 6 22 0" fill="none" stroke="#fff" stroke-width="1.4"/></g><text x="${summaryContentX+50+summaryTextWidth/2}" y="770.5" dominant-baseline="central" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="600" font-family="Microsoft YaHei,sans-serif">出入库明细</text></g>`;
- s+=node('其他入库单',310,bottomY,150,'#437fb5','box','其它出入库','warehouse')+node('其他入库明细',565,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库明细',1045,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库单',1267.5,bottomY,150,'#437fb5','box','其它出入库','warehouse')+line(`M${right('其他入库单')} ${bottomY+19}H${left('其他入库明细')}`)+line(`M${left('其他出库单')} ${bottomY+19}H${right('其他出库明细')}`)+line(`M${right('其他入库明细')} ${bottomY+19}H778V${lane(4)}H798`)+line(`M${left('其他出库明细')} ${bottomY+19}H1008V${lane(4)}H988`)+line(`M893 ${804+dbShift}V${bottomY+14}`)+node('即时库存',813,bottomY+20,160,'#408f98','stock','库存查询与货主','warehouse');
- s+=line(`M893 ${bottomY+58}V${bottomY+74}`)+node('仓库盘点',813,bottomY+80,160,'#3f8e88','count','仓库盘点','warehouse');
+ s+=node('其他入库单',310,bottomY,150,'#437fb5','box','其它出入库','warehouse')+node('其他入库明细',565,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库明细',1045,bottomY,170,'#437fb5','list','其它出入库','warehouse')+node('其他出库单',1267.5,bottomY,150,'#437fb5','box','其它出入库','warehouse')+line(`M${right('其他入库单')} ${bottomY+19}H${left('其他入库明细')}`)+line(`M${left('其他出库单')} ${bottomY+19}H${right('其他出库明细')}`)+line(`M${right('其他入库明细')} ${bottomY+19}H778V${lane(4)}H798`)+line(`M${left('其他出库明细')} ${bottomY+19}H1008V${lane(4)}H988`)+line(`M893 ${804+dbShift}V${bottomY+14}`)+inventoryResult(893,bottomY+20);
+ s+=line(`M893 ${bottomY+66}V${bottomY+82}`)+node('仓库盘点',813,bottomY+88,160,'#3f8e88','count','仓库盘点','warehouse');
  return s+`</g><text x="1550" y="${height-3}" text-anchor="end" fill="#7896ac" font-size="11">界面原型 · 示例流程 · 点击节点进入对应模块</text></svg></section>`;
  };
  let navigate=null,resizeTimer=null;
@@ -1059,7 +1128,7 @@ function list(){
  const queryFields=isSales?`<div class="field"><label for="filterColumn">查询条件</label><select id="filterColumn"><option value="all">全部列</option>${SALES_COLUMNS.map(c=>`<option value="${c.key}" ${queryField===c.key?'selected':''}>${esc(salesColumnLabel(c))}</option>`).join('')}</select></div><div class="field"><label for="filterQuery">查询内容</label><input id="filterQuery" placeholder="请输入查询内容" value="${esc(query)}"></div>`:`<div class="field"><label>关键词</label><input id="filterQuery" placeholder="编号 / 名称 / 业务对象" value="${esc(query)}"></div><div class="field"><label>状态</label><select id="filterStatus"><option value="">全部状态</option>${['待审核','已审核','草稿','已启用','执行中','待确认'].map(s=>`<option ${status===s?'selected':''}>${s}</option>`).join('')}</select></div>`;
  const toolbar=isSales?'':`<div class="tabletoolbar"><span>共 <b>${filtered.length}</b> 条记录 <span class="count-label">示例数据</span></span><button class="link" id="export">导出当前列表 ↓</button></div>`;
  const table=isSales?salesGrid(data,filtered):simpleTable(data.h,shown);
- return title(current,sub,!isSales)+`<section class="panel"><div class="tabs">${['全部','待审核','已审核','草稿'].map(t=>`<button class="${tab===t?'active':''}" data-tab="${t}">${t}</button>`).join('')}</div><form class="filters ${isSales?'sales-filters':''}" id="filterForm">${queryFields}<button class="btn primary" type="submit">查询</button><button class="btn" type="button" id="clearFilter">重置</button></form>${toolbar}${table}<div class="pagination"><span>单击单元格编辑 · Enter 保存 · Esc 取消</span><div class="pages">每页 20 条 <button disabled>‹</button><button class="selected">1</button><button disabled>›</button></div></div></section>${current==='MRP 物料需求计算'?'<div class="alert" style="margin-top:18px">MRP 页面当前仅演示计划结果结构；尚未连接库存、BOM 或真实计算引擎。备货抵扣请进入销售管理查看交互示例。</div>':''}<div class="foot">表格修改保存在当前浏览器，不上传服务器；清理浏览器数据会丢失。新增单据仍为会话演示。</div>`;
+ return title(current,sub,!isSales)+`<section class="panel"><div class="tabs">${['全部','待审核','已审核','草稿'].map(t=>`<button class="${tab===t?'active':''}" data-tab="${t}">${t}</button>`).join('')}</div><form class="filters ${isSales?'sales-filters':''}" id="filterForm">${queryFields}<button class="btn primary" type="submit">查询</button><button class="btn" type="button" id="clearFilter">重置</button></form>${toolbar}${table}<div class="pagination"><span>单击选中 · 双击或 F2 编辑 · 直接输入覆盖</span><div class="pages">每页 20 条 <button disabled>‹</button><button class="selected">1</button><button disabled>›</button></div></div></section>${current==='MRP 物料需求计算'?'<div class="alert" style="margin-top:18px">MRP 页面当前仅演示计划结果结构；尚未连接库存、BOM 或真实计算引擎。备货抵扣请进入销售管理查看交互示例。</div>':''}<div class="foot">表格修改保存在当前浏览器，不上传服务器；清理浏览器数据会丢失。新增单据仍为会话演示。</div>`;
 }
 
 const ALLOC_HEADERS=['备货来源','正式订单','累计抵扣','单位','状态'];

@@ -777,7 +777,7 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
         layout=schema.map(c=>({key:c.key,width:Math.max(80,c.width||100),align:'left'}));
         if(Array.isArray(saved.layout)&&saved.layout.length===schema.length&&new Set(saved.layout.map(c=>c.key)).size===schema.length&&saved.layout.every(c=>schema.some(s=>s.key===c.key)&&Number.isFinite(c.width)&&c.width>=10&&c.width<=600))layout=saved.layout.map(c=>({...c,align:['left','center','right'].includes(c.align)?c.align:'left'}));
         if(Array.isArray(saved.rows)) {
-          const loaded=saved.rows.map(r=>{const checked=r.preserveValues?importedRow(r.values,r.recordStatus):makeRow(r.values,r.manual||[]);checked.id=typeof r.id==='string'?r.id:uuid();if(typeof r.sourceFile==='string'&&Number.isInteger(r.sourceRow)){checked.sourceFile=r.sourceFile;checked.sourceRow=r.sourceRow;}checked.recordStatus=['草稿','待审核','已审核'].includes(r.recordStatus)?r.recordStatus:'草稿';return checked;});
+          const loaded=saved.rows.map(r=>{const checked=r.preserveValues?importedRow(r.values,r.recordStatus):makeRow(r.values,r.manual||[]);checked.id=typeof r.id==='string'?r.id:uuid();if(typeof r.sourceFile==='string'&&Number.isInteger(r.sourceRow)){checked.sourceFile=source?.previousFileName===r.sourceFile?source.fileName:r.sourceFile;checked.sourceRow=r.sourceRow;}checked.recordStatus=['草稿','待审核','已审核'].includes(r.recordStatus)?r.recordStatus:'草稿';return checked;});
           if(new Set(loaded.map(r=>r.id)).size!==loaded.length)throw Error('订单标识重复'); rows=loaded;
         }
       }
@@ -1364,7 +1364,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 const SALES_SOURCES=[
  {title:'摩电销售订单明细',fileName:'销售订单明细表1.xlsm',legacy:true},
  {title:'摩电零销订单明细',fileName:'销售订单明细表3.xlsm'},
- {title:'通机销售订单明细',fileName:'销售订单明细表4.xlsm'}
+ {title:'通机销售订单明细',fileName:'销售订单明细表3.xlsm',storageFileName:'销售订单明细表4.xlsm',previousFileName:'销售订单明细表4.xlsm'}
 ];
 let authController=null,salesWorkspace=null,salesWorkspaceUser=null,customerWorkspace=null,customerWorkspaceUser=null;
 const salesWorkspaces=new Map();
@@ -1378,8 +1378,8 @@ function getCustomerWorkspace(){
 }
 function getSalesWorkspace(){
  const user=authController.getUser(),source=SALES_SOURCES.find(s=>s.title===current)||SALES_SOURCES[0];
- const key=user.id+':'+source.fileName;
- if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:source.legacy?salesOrderData().rows:[],title:source.title,source,onChange:()=>render(),storageKey:source.legacy?'jingshui.erp.sales.workspace.v2.'+user.id:'jingshui.erp.sales.source.'+source.fileName+'.'+user.id,readOnly:user.role==='viewer'}));
+ const key=user.id+':'+source.title;
+ if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:source.legacy?salesOrderData().rows:[],title:source.title,source,onChange:()=>render(),storageKey:source.legacy?'jingshui.erp.sales.workspace.v2.'+user.id:'jingshui.erp.sales.source.'+(source.storageFileName||source.fileName)+'.'+user.id,readOnly:user.role==='viewer'}));
  return salesWorkspaces.get(key);
 }
 function refreshAuthorizedUI(user){

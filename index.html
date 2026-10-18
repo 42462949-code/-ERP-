@@ -850,6 +850,7 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     const checkedRows = new Set();
     let sourceHandle=null,sourceBusy=false,headerAtFive=false,lastSourceSync='',pageIndex=0;
     const PAGE_SIZE=100;
+    const sourceFiles=source?(source.fileNames||[source.fileName]):[];
     let hasLoaded=!requireLoadConditions,requestVersion=0,pendingFolderLoad=false;
     const conditionKey=storageKey+'.load-conditions';
     const readConditions=()=>{
@@ -858,7 +859,7 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     };
     const saveConditions=()=>{if(requireLoadConditions)try{localStorage.setItem(conditionKey,JSON.stringify(filters));}catch{storageWarning='加载条件未能保存，下次进入时需要重新填写。';}};
     const hasConditions=()=>filters.some(f=>f.key&&f.text.trim());
-    const sourceBar=()=>!source?'':requireLoadConditions?`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span>D:&#92;ERP&#92;XS&#92;${escape(source.fileName)} · 销售订单列表!B5:AK65536</span><small>${window.ERPLocalWorkbooks.get(folderOwner)?'已连接：'+escape(window.ERPLocalWorkbooks.get(folderOwner).name):'请先选择本地数据文件夹。'} 填写至少一个加载条件，只加载匹配记录。</small></div><button data-sales-source-connect ${sourceBusy?'disabled':''}>选择数据文件夹</button><input type="file" data-sales-source-folder webkitdirectory multiple hidden><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" multiple hidden></div>`:`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span title="D:&#92;ERP&#92;XS&#92;${escape(source.fileName)}">${escape(source.fileName)} · 销售订单列表!B${headerAtFive?'6':'5'}:AK65536</span><small>${lastSourceSync?'最近同步：'+escape(lastSourceSync):'首次连接时，请选择您电脑中的对应工作簿。'} 同步更新文件来源的记录，保留其他原有记录。</small></div><label><input type="checkbox" data-sales-source-header ${headerAtFive?'checked':''} ${sourceBusy||readOnly?'disabled':''}>第 5 行为表头</label><button data-sales-source-connect ${sourceBusy||readOnly?'disabled':''}>${sourceBusy?'正在读取…':'连接本地工作簿'}</button><button data-sales-source-refresh ${sourceBusy||readOnly?'disabled':''}>刷新本地数据</button><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" hidden></div>`;
+    const sourceBar=()=>!source?'':requireLoadConditions?`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span>D:&#92;ERP&#92;XS&#92;${sourceFiles.map(escape).join(' → ')} · 销售订单列表!B5:AK65536${source.sortByReceivedAt?' · 接单日期升序':''}</span><small>${window.ERPLocalWorkbooks.get(folderOwner)?'已连接：'+escape(window.ERPLocalWorkbooks.get(folderOwner).name):'请先选择本地数据文件夹。'} 填写至少一个加载条件，只加载匹配记录。</small></div><button data-sales-source-connect ${sourceBusy?'disabled':''}>选择数据文件夹</button><input type="file" data-sales-source-folder webkitdirectory multiple hidden><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" multiple hidden></div>`:`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span title="D:&#92;ERP&#92;XS&#92;${escape(source.fileName)}">${escape(source.fileName)} · 销售订单列表!B${headerAtFive?'6':'5'}:AK65536</span><small>${lastSourceSync?'最近同步：'+escape(lastSourceSync):'首次连接时，请选择您电脑中的对应工作簿。'} 同步更新文件来源的记录，保留其他原有记录。</small></div><label><input type="checkbox" data-sales-source-header ${headerAtFive?'checked':''} ${sourceBusy||readOnly?'disabled':''}>第 5 行为表头</label><button data-sales-source-connect ${sourceBusy||readOnly?'disabled':''}>${sourceBusy?'正在读取…':'连接本地工作簿'}</button><button data-sales-source-refresh ${sourceBusy||readOnly?'disabled':''}>刷新本地数据</button><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" hidden></div>`;
 
     let deletedRows = null;
     const rawValue = (c, value) => value instanceof Date ? normalizedDate(value,c.type!=="date") : (value ?? "");
@@ -1033,11 +1034,23 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
       if(token!==requestVersion)return;
       sourceBusy=true;notice='正在按条件查询…';refresh();
       try{
-        const file=await window.ERPLocalWorkbooks.get(folderOwner).getFile(source.fileName);
-        const data=await window.SalesExcelIO.read(file,{sheetName:'销售订单列表',headerAtFive:false,matches:values=>matchesConditions({values:Object.fromEntries(schema.map((c,i)=>[c.key,rawValue(c,values[i])]))},conditions)});
-        if(token!==requestVersion)return;
-        const incoming=data.rows.map((values,i)=>{const row=importedRow(values);row.sourceFile=source.fileName;row.sourceRow=data.sourceRows[i];row.id='source:'+source.fileName+':'+row.sourceRow;return row;});
-        rows=incoming;hasLoaded=true;appliedFilters=conditions;headerFilters.clear();selectedRow=null;deletedRows=null;checkedRows.clear();tab='全部';pageIndex=0;lastSourceSync=new Date().toLocaleString('zh-CN');persist();notice=`已按条件从 ${source.fileName} 加载 ${incoming.length} 行。`+(data.warnings||[]).join('；');
+        const connection=window.ERPLocalWorkbooks.get(folderOwner),incoming=[],warnings=[];
+        for(const fileName of sourceFiles){
+          if(token!==requestVersion)return;
+          try{
+            const file=await connection.getFile(fileName);
+            const data=await window.SalesExcelIO.read(file,{sheetName:'销售订单列表',headerAtFive:false,matches:values=>matchesConditions({values:Object.fromEntries(schema.map((c,i)=>[c.key,rawValue(c,values[i])]))},conditions)});
+            if(token!==requestVersion)return;
+            data.rows.forEach((values,i)=>{const row=importedRow(values);row.sourceFile=fileName;row.sourceRow=data.sourceRows[i];row.id='source:'+fileName+':'+row.sourceRow;incoming.push(row);});
+            warnings.push(...(data.warnings||[]).map(w=>fileName+'：'+w));
+          }catch(e){throw Error(fileName+'：'+e.message);}
+        }
+        if(source.sortByReceivedAt){
+          const dated=incoming.map((row,index)=>{let date=null;try{const raw=row.values.receivedAt;date=normalizedDate(typeof raw==='string'?raw.replace(/(\d{1,2}:\d{2})\s+(\d{2})$/,'$1:$2'):raw,true)||null;}catch{/* Retain unrecognized dates after valid dates. */}return {row,index,date};});
+          dated.sort((a,b)=>(a.date===b.date?0:a.date===null?1:b.date===null?-1:a.date<b.date?-1:1)||a.index-b.index);
+          incoming.splice(0,incoming.length);dated.forEach(item=>incoming.push(item.row));
+        }
+        rows=incoming;hasLoaded=true;appliedFilters=conditions;headerFilters.clear();selectedRow=null;deletedRows=null;checkedRows.clear();tab='全部';pageIndex=0;lastSourceSync=new Date().toLocaleString('zh-CN');persist();notice=`已按条件从 ${sourceFiles.join('、')} 加载 ${incoming.length} 行。`+(source.sortByReceivedAt?'已按接单日期升序排列。':'')+warnings.join('；');
       }catch(e){if(token===requestVersion)notice='加载失败，原有结果保持不变：'+e.message;}
       finally{if(token===requestVersion){sourceBusy=false;refresh();}}
     }
@@ -1498,7 +1511,7 @@ function salesOrderDetail(row){
 const demoCompany='示例公司一',demoFactory='示例工厂一';
 let current='home',currentModule='home',expandedModule=null,tab='全部',query='',queryField='all',status='',drawerMode='',created={},allocated=0;const $=s=>document.querySelector(s);function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function notify(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>$('#toast').classList.remove('show'),3500)}
 function renderNav(){let html=`<button class="nav-main ${current==='home'?'active':''}" data-go="home">${icon('home')}<span>管理工作台</span></button>`;for(const [id,name,children] of modules){html+=`<button class="nav-main ${currentModule===id?'active':''}" data-module="${id}" title="${name}" aria-expanded="${expandedModule===id}" aria-controls="nav-children-${id}">${icon(id)}<span>${name}</span><span class="chev">${expandedModule===id?'⌃':'⌄'}</span></button><div id="nav-children-${id}" class="children ${expandedModule===id?'open':''}">${children.map(c=>`<button class="leaf ${current===c?'active':''}" data-page="${c}" data-id="${id}">${c}</button>`).join('')}</div>`}$('#nav').innerHTML=html;$('#nav').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('home','home'));$('#nav').querySelectorAll('[data-module]').forEach(b=>b.onclick=()=>{const sidebar=$('.sidebar'),openingMobile=window.innerWidth<=800&&!sidebar.classList.contains('mobile-expanded');if(window.innerWidth<=800)sidebar.classList.add('mobile-expanded');const id=b.dataset.module;if(expandedModule===id&&!openingMobile){expandedModule=null;renderNav();return;}expandedModule=id;renderNav()});$('#nav').querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{go(b.dataset.page,b.dataset.id);if(window.innerWidth<=800)$('.sidebar').classList.remove('mobile-expanded')})}
-function go(page,id){if(page==='销售订单明细表')page='摩电销售订单明细';current=page;currentModule=id;if(SALES_SOURCES.some(s=>s.title===page))getSalesWorkspace().enter();expandedModule=id;tab='全部';query='';queryField='all';status='';renderNav();render();window.scrollTo(0,0)}
+function go(page,id){if(page==='销售订单明细表')page='摩电销售订单明细';current=page;currentModule=id;if(page==='销售订单汇总表')getSalesSummaryWorkspace().enter();else if(SALES_SOURCES.some(s=>s.title===page))getSalesWorkspace().enter();expandedModule=id;tab='全部';query='';queryField='all';status='';renderNav();render();window.scrollTo(0,0)}
 const badge=s=>`<span class="badge ${['已完成','已审核','已入库','合格','已启用','已生效'].includes(s)?'green':['待审核','待报检','待执行','待确认'].includes(s)?'orange':['草稿','未启用'].includes(s)?'gray':''}">${esc(s)}</span>`;function title(h,sub,action=true){return `<div class="page-title"><div><h1>${h}</h1><p>${sub}</p></div>${action?`<button class="btn primary" id="newDoc">${icon('plus')}新增${current==='物品资料'?'物品':'单据'}</button>`:''}</div>`}
 function home(){return window.renderWorkflowHome($('#brandicon').src)}
 function simpleTable(head,rows,homeFlag=false){return `<div class="table-wrap"><table><thead><tr>${head.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map((r,i)=>`<tr data-row="${i}" ${homeFlag?'data-home="true"':''}>${r.map((c,j)=>`<td ${j===0?'class="code"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
@@ -1574,7 +1587,7 @@ function getCustomerWorkspace(){
 }
 function getSalesSummaryWorkspace(){
  const user=authController.getUser(),key=user.id+':销售订单汇总表';
- if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:[],title:'销售订单汇总表',onChange:()=>render(),storageKey:'jingrui.erp.sales.summary.v1.'+user.id,readOnly:user.role==='viewer'}));
+ if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:[],title:'销售订单汇总表',source:{fileNames:['销售订单明细表1.xlsm','销售订单明细表2.xlsm','销售订单明细表3.xlsm'],sortByReceivedAt:true},requireLoadConditions:true,folderOwner:user.id,widthReferenceKey:'jingshui.erp.sales.source.销售订单明细表3.xlsm.'+user.id,onChange:()=>render(),storageKey:'jingrui.erp.sales.summary.v1.'+user.id,readOnly:user.role==='viewer'}));
  return salesWorkspaces.get(key);
 }
 function getSalesWorkspace(){

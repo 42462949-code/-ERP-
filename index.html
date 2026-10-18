@@ -1119,7 +1119,7 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     async function chooseFolder(loadAfter=false){
       try{
         pendingFolderLoad=loadAfter;
-        if(window.showDirectoryPicker){const chosen=await window.ERPLocalWorkbooks.choose(folderOwner);pendingFolderLoad=false;return chosen;}
+        if(window.showDirectoryPicker&&location.protocol!=='file:'){const chosen=await window.ERPLocalWorkbooks.choose(folderOwner);pendingFolderLoad=false;return chosen;}
         pendingFolderLoad=loadAfter;root()?.querySelector('[data-sales-source-folder]').click();return false;
       }catch(e){pendingFolderLoad=false;if(e.name!=='AbortError')say('无法连接文件夹：'+e.message);return false;}
     }

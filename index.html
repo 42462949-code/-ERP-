@@ -729,10 +729,11 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     if (y<1900 || y>9999 || d.getUTCFullYear()!==y || d.getUTCMonth()!==mo-1 || d.getUTCDate()!==day || h>23 || mi>59 || sec>59) throw Error('日期或时间不存在。');
     return `${y}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}${datetime?`T${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:''}`;
   };
-  window.createSalesWorkspace = function ({columns, initialRows, onChange, storageKey = STORE, readOnly = false, title = "销售订单明细表", salesCalculations = true, source = null}) {
+  window.createSalesWorkspace = function ({columns, initialRows, onChange, storageKey = STORE, readOnly = false, title = "销售订单明细表", salesCalculations = true, source = null, widthReferenceKey = null}) {
     const schema = columns.map(c => ({...c}));
     const formulas = salesCalculations ? FORMULAS : [];
     const tabs = salesCalculations ? ["全部","待审核","已审核","草稿"] : ["全部"];
+    let widthReferenceSignature = '', storageReadFailed = false;
     let storageWarning = '', notice = '', tab = '全部', filters = Array.from({length:4},()=>({key:'all',text:''})), appliedFilters = filters.map(f=>({...f}));
     let layout = schema.map(c=>({key:c.key,width:Math.max(80, c.width || 100),align:'left'}));
     let rows = [], drawerOpen = false, draftLayout = [], pendingImport = null, pendingColumns = [], selectedRow = null;
@@ -772,19 +773,34 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     try {
       const saved=JSON.parse(localStorage.getItem(storageKey)||'null');
       if(saved?.version===1) {
+        widthReferenceSignature=typeof saved.widthReferenceSignature==='string'?saved.widthReferenceSignature:'';
         headerAtFive=!!saved.headerAtFive;lastSourceSync=typeof saved.lastSourceSync==='string'?saved.lastSourceSync:'';
         if(Array.isArray(saved.extraColumns))saved.extraColumns.forEach(c=>{if(c&&typeof c.key==='string'&&c.key.startsWith('imported_')&&!schema.some(x=>x.key===c.key)&&typeof c.label==='string')schema.push({key:c.key,label:c.label,type:'text',width:140});});
         layout=schema.map(c=>({key:c.key,width:Math.max(80,c.width||100),align:'left'}));
         if(Array.isArray(saved.layout)&&saved.layout.length===schema.length&&new Set(saved.layout.map(c=>c.key)).size===schema.length&&saved.layout.every(c=>schema.some(s=>s.key===c.key)&&Number.isFinite(c.width)&&c.width>=10&&c.width<=600))layout=saved.layout.map(c=>({...c,align:['left','center','right'].includes(c.align)?c.align:'left'}));
         if(Array.isArray(saved.rows)) {
-          const loaded=saved.rows.map(r=>{const checked=r.preserveValues?importedRow(r.values,r.recordStatus):makeRow(r.values,r.manual||[]);checked.id=typeof r.id==='string'?r.id:uuid();if(typeof r.sourceFile==='string'&&Number.isInteger(r.sourceRow)){checked.sourceFile=source?.previousFileName===r.sourceFile?source.fileName:r.sourceFile;checked.sourceRow=r.sourceRow;}checked.recordStatus=['草稿','待审核','已审核'].includes(r.recordStatus)?r.recordStatus:'草稿';return checked;});
+          const loaded=saved.rows.map(r=>{const checked=r.preserveValues?importedRow(r.values,r.recordStatus):makeRow(r.values,r.manual||[]);checked.id=typeof r.id==='string'?r.id:uuid();if(typeof r.sourceFile==='string'&&Number.isInteger(r.sourceRow)){checked.sourceFile=(source?.previousFileNames||[source?.previousFileName]).includes(r.sourceFile)?source.fileName:r.sourceFile;checked.sourceRow=r.sourceRow;}checked.recordStatus=['草稿','待审核','已审核'].includes(r.recordStatus)?r.recordStatus:'草稿';return checked;});
           if(new Set(loaded.map(r=>r.id)).size!==loaded.length)throw Error('订单标识重复'); rows=loaded;
         }
       }
-    }catch(e){storageWarning='未能读取本地保存的数据或配置，已使用示例；原存储未删除。'+e.message;}
+    }catch(e){storageReadFailed=true;storageWarning='未能读取本地保存的数据或配置，已使用示例；原存储未删除。'+e.message;}
     const persist = () => {
-      try {localStorage.setItem(storageKey,JSON.stringify({version:1,rows,layout,headerAtFive,lastSourceSync,extraColumns:schema.filter(c=>c.key.startsWith('imported_'))})); storageWarning=''; return true;}
+      try {localStorage.setItem(storageKey,JSON.stringify({version:1,rows,layout,widthReferenceSignature,headerAtFive,lastSourceSync,extraColumns:schema.filter(c=>c.key.startsWith('imported_'))})); storageWarning=''; return true;}
       catch(e){storageWarning='本地保存失败（可能存储空间不足或浏览器禁用存储）。当前修改仅在本页面有效，离开前请下载 Excel。';return false;}
+    };
+    // Copy widths by field identity; retain each table's order, alignment and data.
+    const applyReferenceWidths = () => {
+      if(!widthReferenceKey)return;
+      let reference;
+      try{reference=JSON.parse(localStorage.getItem(widthReferenceKey)||'null')?.layout;}catch{return;}
+      if(!Array.isArray(reference))reference=columns.map(c=>({key:c.key,width:Math.max(80,c.width||100)}));
+      const widths=new Map(reference.filter(c=>c&&typeof c.key==='string'&&Number.isInteger(c.width)&&c.width>=10&&c.width<=600).map(c=>[c.key,c.width]));
+      if(!widths.size)return;
+      const signature=JSON.stringify([...widths].sort(([a],[b])=>a.localeCompare(b)));
+      if(signature===widthReferenceSignature)return;
+      layout.forEach(c=>{if(widths.has(c.key))c.width=widths.get(c.key);});
+      widthReferenceSignature=signature;
+      if(!storageReadFailed)persist();
     };
     const column = key => schema.find(c=>c.key===key);
     const displayCell = (c, raw) => {
@@ -797,6 +813,7 @@ t.sheetStubs=true}if(t.type=="array"){t.type="binary";var a=xk(e,t);t.type="arra
     const options = selected => `<option value="all" ${selected==='all'?'selected':''}>全部列</option>${schema.map((c,i)=>`<option value="${escape(c.key)}" ${selected===c.key?'selected':''}>${i+1}. ${escape(c.label)}</option>`).join('')}`;
     const renderDrawer = () => !drawerOpen?'':`<div class="sales-modal-shade" data-sales-dismiss><section class="sales-layout-dialog" role="dialog" aria-modal="true" aria-label="列设置"><header><h2>列设置</h2><button data-sales-close aria-label="关闭列设置">×</button></header><p>上下调整顺序，设置宽度（10–600px）与对齐方式。保存后在此浏览器自动恢复。</p><div class="sales-layout-items">${draftLayout.map((c,i)=>`<div class="sales-layout-item" data-layout-key="${escape(c.key)}"><span>${i+1}. ${escape(column(c.key).label)}</span><button data-move="up" data-index="${i}" ${i===0?'disabled':''} aria-label="上移${escape(column(c.key).label)}">↑</button><button data-move="down" data-index="${i}" ${i===draftLayout.length-1?'disabled':''} aria-label="下移${escape(column(c.key).label)}">↓</button><label>宽度 <input type="number" min="10" max="600" value="${c.width}" data-layout-width="${escape(c.key)}" aria-label="${escape(column(c.key).label)}宽度"></label><label>对齐 <select data-layout-align="${escape(c.key)}" aria-label="${escape(column(c.key).label)}对齐">${[['left','左对齐'],['center','居中'],['right','右对齐']].map(([v,t])=>`<option value="${v}" ${c.align===v?'selected':''}>${t}</option>`).join('')}</select></label></div>`).join('')}</div><footer><button data-sales-center-all>整表居中</button><button data-sales-default-layout>恢复默认</button><button data-sales-close>取消</button><button class="sales-primary" data-sales-save-layout>保存设置</button></footer></section></div>`;
     function render(){
+      applyReferenceWidths();
       const filtered=visibleRows(),pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));pageIndex=Math.min(pageIndex,pages-1);
       const showing=filtered.slice(pageIndex*PAGE_SIZE,(pageIndex+1)*PAGE_SIZE);
       return `<section class="sales-workspace" aria-label="${escape(title)}工作区"><div class="sales-heading"><h1>${escape(title)}</h1><span>本地演示 · ${readOnly?'当前账号只读':'单击选中 · 双击或 F2 编辑'} · 数据不会上传服务器</span></div><div class="sales-sheet">${sourceBar()}<div class="sales-tabs" role="tablist">${tabs.map(t=>`<button role="tab" aria-selected="${tab===t}" class="${tab===t?'active':''}" data-sales-tab="${t}">${t}</button>`).join('')}<div class="sales-tools"><button data-sales-delete ${readOnly||!checkedRows.size?'disabled':''}>删除选中行${checkedRows.size?`（${checkedRows.size}）`:''}</button>${deletedRows?`<button data-sales-undo-delete ${readOnly?'disabled':''}>撤销删除</button>`:''}<button data-sales-import ${readOnly?'disabled':''}>上传 Excel</button><button data-sales-export>下载 Excel</button><button data-sales-layout>列设置</button><input type="file" data-sales-file accept=".xlsx,.xls,.xlsm" hidden></div></div><form class="sales-query" data-sales-query>${filters.map((f,i)=>`<div class="sales-query-pair"><label class="sales-sr" for="sales-field-${i}">查询条件${i+1}</label><select id="sales-field-${i}" data-sales-filter-key="${i}">${options(f.key)}</select><label class="sales-sr" for="sales-value-${i}">查询内容${i+1}</label><input id="sales-value-${i}" data-sales-filter-text="${i}" value="${escape(f.text)}" placeholder="查询内容 ${i+1}"></div>`).join('')}<button class="sales-primary" type="submit">查询</button><button type="button" data-sales-reset>重置</button></form>${notice||storageWarning?`<div class="sales-notice" role="status">${escape(notice)} ${escape(storageWarning)}<button data-sales-notice-close aria-label="关闭提示">×</button></div>`:''}<div class="sales-grid-scroller" tabindex="0" aria-label="${escape(title)}，左右滚动查看更多列"><table class="sales-edit-grid" style="width:${40+layout.reduce((a,c)=>a+c.width,0)}px"><colgroup><col style="width:40px">${layout.map(c=>`<col data-sales-col="${escape(c.key)}" style="width:${c.width}px">`).join('')}</colgroup><thead><tr><th class="sales-check-cell"><input type="checkbox" data-sales-check-all aria-label="勾选当前查询结果的全部行" ${filtered.length&&filtered.every(r=>checkedRows.has(r.id))?'checked':''} ${readOnly||!filtered.length?'disabled':''}></th>${layout.map(c=>`<th scope="col" draggable="true" data-sales-header="${escape(c.key)}" style="text-align:${c.align}" title="拖动换序；拖动右边界改宽">${escape(column(c.key).label)}<span class="sales-resizer" data-sales-resize="${escape(c.key)}" role="separator" aria-orientation="vertical" aria-label="调整${escape(column(c.key).label)}列宽"></span></th>`).join('')}</tr></thead><tbody>${showing.map(r=>`<tr data-sales-row="${escape(r.id)}" class="${r.id===selectedRow?'sales-selected-row':''}"><td class="sales-check-cell"><input type="checkbox" data-sales-check-row="${escape(r.id)}" aria-label="勾选第 ${rows.indexOf(r)+1} 行" ${checkedRows.has(r.id)?'checked':''} ${readOnly?'disabled':''}></td>${layout.map(c=>`<td tabindex="0" data-sales-cell="${escape(c.key)}" data-row-id="${escape(r.id)}" style="text-align:${c.align}" class="${!r.preserveValues&&r.manual.includes(c.key)?'sales-manual':''}" title="${escape(r.values[c.key])}${!r.preserveValues&&r.manual.includes(c.key)?'（手工覆盖公式）':''}">${escape(displayCell(column(c.key),r.values[c.key]))}</td>`).join('')}</tr>`).join('')}${showing.length?'':`<tr><td colspan="${schema.length+1}" class="sales-empty">没有符合条件的记录</td></tr>`}</tbody></table></div><div class="sales-bottom"><span>${filtered.length} / ${rows.length} 行 · 单击选中 · 双击或 F2 编辑${selectedRow?' · 已选择一行':''}</span>${pages>1?`<div class="sales-pages"><button data-sales-prev ${pageIndex?'':'disabled'}>上一页</button><span>${pageIndex+1} / ${pages} 页</span><button data-sales-next ${pageIndex<pages-1?'':'disabled'}>下一页</button></div>`:''}${salesCalculations?`<button data-sales-restore-formulas ${selectedRow&&!readOnly?'':'disabled'}>恢复选中行公式</button>`:''}</div><details class="sales-formula-help"><summary>${salesCalculations?"计算规则与本地保存说明":"表格操作与本地保存说明"}</summary><p>${salesCalculations?`未出货数＝（正式订单数量大于 0 时取正式数量，否则取预测数量）－已出货数；未完工数＝工单数量－已生产数；生产进度＝已生产数÷工单数量×100%，工单为 0 时为 0%。数量最多 3 位小数、单价最多 6 位小数。拒绝超发和超产。公式格可手工覆盖，带“手改”标记；选中行后可恢复公式。仅保存于当前浏览器，不是服务器数据；清理浏览器数据会丢失，请下载 Excel 备份。导入记录按原内容追加，不参与自动计算；可主动恢复公式。导出全部记录，不受查询条件影响。`:"字段及初始数据与您提供的客户表一致，导入数据追加到表尾。单击选中，双击或 F2 修改，也可直接键入替换；Enter 保存，Esc 取消。数据和列布局仅保存在当前浏览器，清理浏览器数据会丢失，请下载 Excel 备份。导出全部客户记录，不受查询条件影响。"}</p></details></div>${renderDrawer()}${pendingImport?`<div class="sales-modal-shade"><section class="sales-import-dialog" role="dialog" aria-modal="true" aria-label="确认导入"><h2>确认追加到${escape(title)}</h2><p>已读取 ${pendingImport.length} 行，将追加到现有 ${rows.length} 行的最下面，原有数据保留。${pendingColumns.length?`同时保留 ${pendingColumns.length} 个新增字段。`:""}</p><p>空值、文字和负数均按原内容保留，不因业务计算规则拒绝导入。</p><button data-sales-import-cancel>取消</button><button class="sales-primary" data-sales-import-confirm>确认追加数据</button></section></div>`:''}</section>`;
@@ -1364,7 +1381,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 const SALES_SOURCES=[
  {title:'摩电销售订单明细',fileName:'销售订单明细表1.xlsm',legacy:true},
  {title:'摩电零销订单明细',fileName:'销售订单明细表3.xlsm'},
- {title:'通机销售订单明细',fileName:'销售订单明细表3.xlsm',storageFileName:'销售订单明细表4.xlsm',previousFileName:'销售订单明细表4.xlsm'}
+ {title:'通机销售订单明细',fileName:'销售订单明细表2.xlsm',storageFileName:'销售订单明细表4.xlsm',previousFileNames:['销售订单明细表3.xlsm','销售订单明细表4.xlsm']}
 ];
 let authController=null,salesWorkspace=null,salesWorkspaceUser=null,customerWorkspace=null,customerWorkspaceUser=null;
 const salesWorkspaces=new Map();
@@ -1379,7 +1396,7 @@ function getCustomerWorkspace(){
 function getSalesWorkspace(){
  const user=authController.getUser(),source=SALES_SOURCES.find(s=>s.title===current)||SALES_SOURCES[0];
  const key=user.id+':'+source.title;
- if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:source.legacy?salesOrderData().rows:[],title:source.title,source,onChange:()=>render(),storageKey:source.legacy?'jingshui.erp.sales.workspace.v2.'+user.id:'jingshui.erp.sales.source.'+(source.storageFileName||source.fileName)+'.'+user.id,readOnly:user.role==='viewer'}));
+ if(!salesWorkspaces.has(key))salesWorkspaces.set(key,window.createSalesWorkspace({columns:SALES_COLUMNS,initialRows:source.legacy?salesOrderData().rows:[],title:source.title,source,widthReferenceKey:source.title==='摩电零销订单明细'?null:'jingshui.erp.sales.source.销售订单明细表3.xlsm.'+user.id,onChange:()=>render(),storageKey:source.legacy?'jingshui.erp.sales.workspace.v2.'+user.id:'jingshui.erp.sales.source.'+(source.storageFileName||source.fileName)+'.'+user.id,readOnly:user.role==='viewer'}));
  return salesWorkspaces.get(key);
 }
 function refreshAuthorizedUI(user){

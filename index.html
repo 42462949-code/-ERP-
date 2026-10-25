@@ -785,6 +785,7 @@ window.ERP_VI={
   }
   function reset(page='home',module='home'){tabs.clear();home=null;active=page==='home'?'home':JSON.stringify([module,page]);if(page!=='home')tabs.set(active,{page,module,view:null});paint();}
   function invalidate(page,module){const entry=tabs.get(JSON.stringify([module,page]));if(entry)entry.view=null;}
+  window.addEventListener('erp-summary-layout-changed',()=>{for(const entry of tabs.values())entry.view=null;});
   return {open,reset,invalidate};
  };
 })();
@@ -1365,6 +1366,9 @@ window.ERP_VI={
     return `${y}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}${datetime?`T${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:''}`;
   };
   window.createSalesWorkspace = function ({columns, initialRows, onChange, storageKey = STORE, readOnly = false, title = "销售订单明细表", salesCalculations = true, source = null, widthReferenceKey = null, requireLoadConditions = false, folderOwner = storageKey, initialValuesAreRaw = false, tableHelp = null, addRowLabel = null, emptyMessage = null, persistInitialChangesOnly = false, importSheetName = null}) {
+    // The sales summary is the display-settings reference for every spreadsheet workspace.
+    const summarySettingsKey = 'jingrui.erp.sales.summary.v1.' + storageKey.split('.').pop();
+    widthReferenceKey = storageKey === summarySettingsKey ? null : summarySettingsKey;
     const schema = columns.map(c => ({...c}));
     const formulas = salesCalculations ? FORMULAS : [];
     const tabs = salesCalculations ? ["全部","待审核","已审核","草稿"] : ["全部"];
@@ -1384,7 +1388,7 @@ window.ERP_VI={
     };
     const saveConditions=()=>{if(requireLoadConditions)try{localStorage.setItem(conditionKey,JSON.stringify(filters));}catch{storageWarning='加载条件未能保存，下次进入时需要重新填写。';}};
     const hasConditions=()=>filters.some(f=>f.key&&f.text.trim());
-    const sourceBar=()=>!source?'':requireLoadConditions?`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span>D:&#92;ERP&#92;XS&#92;${sourceFiles.map(escape).join(' → ')} · 销售订单列表!B5:AK65536${source.sortByReceivedAt?' · 接单日期升序':''}</span><small>${window.ERPLocalWorkbooks.get(folderOwner)?'已连接：'+escape(window.ERPLocalWorkbooks.get(folderOwner).name):'请先选择本地数据文件夹。'} 填写至少一个加载条件，只加载匹配记录。</small></div><button data-sales-source-connect ${sourceBusy?'disabled':''}>选择数据文件夹</button><input type="file" data-sales-source-folder webkitdirectory multiple hidden><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" multiple hidden></div>`:`<div class="sales-source-bar"><div class="sales-source-info"><strong>本地数据源</strong><span title="D:&#92;ERP&#92;XS&#92;${escape(source.fileName)}">${escape(source.fileName)} · 销售订单列表!B${headerAtFive?'6':'5'}:AK65536</span><small>${lastSourceSync?'最近同步：'+escape(lastSourceSync):'首次连接时，请选择您电脑中的对应工作簿。'} 同步更新文件来源的记录，保留其他原有记录。</small></div><label><input type="checkbox" data-sales-source-header ${headerAtFive?'checked':''} ${sourceBusy||readOnly?'disabled':''}>第 5 行为表头</label><button data-sales-source-connect ${sourceBusy||readOnly?'disabled':''}>${sourceBusy?'正在读取…':'连接本地工作簿'}</button><button data-sales-source-refresh ${sourceBusy||readOnly?'disabled':''}>刷新本地数据</button><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" hidden></div>`;
+    const sourceBar=()=>!source?'':requireLoadConditions?`<div class="sales-source-bar" hidden style="display:none"><div class="sales-source-info"><strong>本地数据源</strong><span>D:&#92;ERP&#92;XS&#92;${sourceFiles.map(escape).join(' → ')} · 销售订单列表!B5:AK65536${source.sortByReceivedAt?' · 接单日期升序':''}</span><small>${window.ERPLocalWorkbooks.get(folderOwner)?'已连接：'+escape(window.ERPLocalWorkbooks.get(folderOwner).name):'请先选择本地数据文件夹。'} 填写至少一个加载条件，只加载匹配记录。</small></div><button data-sales-source-connect ${sourceBusy?'disabled':''}>选择数据文件夹</button><input type="file" data-sales-source-folder webkitdirectory multiple hidden><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" multiple hidden></div>`:`<div class="sales-source-bar" hidden style="display:none"><div class="sales-source-info"><strong>本地数据源</strong><span title="D:&#92;ERP&#92;XS&#92;${escape(source.fileName)}">${escape(source.fileName)} · 销售订单列表!B${headerAtFive?'6':'5'}:AK65536</span><small>${lastSourceSync?'最近同步：'+escape(lastSourceSync):'首次连接时，请选择您电脑中的对应工作簿。'} 同步更新文件来源的记录，保留其他原有记录。</small></div><label><input type="checkbox" data-sales-source-header ${headerAtFive?'checked':''} ${sourceBusy||readOnly?'disabled':''}>第 5 行为表头</label><button data-sales-source-connect ${sourceBusy||readOnly?'disabled':''}>${sourceBusy?'正在读取…':'连接本地工作簿'}</button><button data-sales-source-refresh ${sourceBusy||readOnly?'disabled':''}>刷新本地数据</button><input type="file" data-sales-source-file accept=".xlsm,.xlsx,.xls" hidden></div>`;
 
     let deletedRows = null;
     const rawValue = (c, value) => value instanceof Date ? normalizedDate(value,c.type!=="date") : (value ?? "");
@@ -1448,7 +1452,7 @@ window.ERP_VI={
       }
     }catch{/* Keep the previously saved layout if the small preferences record is invalid. */}
     const persistLayout = () => {
-      try{localStorage.setItem(layoutKey,JSON.stringify({layout,widthReferenceSignature,headerAtFive}));if(storageWarning.startsWith('列布局保存失败'))storageWarning='';return true;}
+      try{const previousLayout=localStorage.getItem(layoutKey),nextLayout=JSON.stringify({layout,widthReferenceSignature,headerAtFive});localStorage.setItem(layoutKey,nextLayout);if(storageKey===summarySettingsKey&&previousLayout!==nextLayout)window.dispatchEvent(new Event('erp-summary-layout-changed'));if(storageWarning.startsWith('列布局保存失败'))storageWarning='';return true;}
       catch{storageWarning='列布局保存失败，当前宽度仅在本页面有效。';return false;}
     };
     const persist = () => {
@@ -1471,12 +1475,12 @@ window.ERP_VI={
           if(Array.isArray(reference))localStorage.setItem(preferenceKey,JSON.stringify({layout:reference}));
         }
       }catch{return;}
-      if(!Array.isArray(reference))reference=columns.map(c=>({key:c.key,width:Math.max(80,c.width||100)}));
-      const widths=new Map(reference.filter(c=>c&&typeof c.key==='string'&&Number.isInteger(c.width)&&c.width>=10&&c.width<=600).map(c=>[c.key,c.width]));
+      if(!Array.isArray(reference))return;
+      const widths=new Map(reference.filter(c=>c&&typeof c.key==='string'&&Number.isInteger(c.width)&&c.width>=10&&c.width<=600).map(c=>[c.key,{width:c.width,align:['left','center','right'].includes(c.align)?c.align:'left'}]));
       if(!widths.size)return;
       const signature=JSON.stringify([...widths].sort(([a],[b])=>a.localeCompare(b)));
       if(signature===widthReferenceSignature)return;
-      layout.forEach(c=>{if(widths.has(c.key))c.width=widths.get(c.key);});
+      layout.forEach(c=>{if(widths.has(c.key))Object.assign(c,widths.get(c.key));});
       widthReferenceSignature=signature;
       if(!storageReadFailed)persistLayout();
     };
@@ -2042,11 +2046,11 @@ window.ERPBomReportTemplate = {"title":"精锐工贸有限公司\nBOM表","colum
    if(!result)return '<div class="bom-query-results"><div class="bom-query-empty">输入物品编码并选择展开方式后，点击“查询”。</div></div>';
    const rows=outputRows(),cols=columns(),pages=Math.max(1,Math.ceil(rows.length/pageSize));page=Math.min(page,pages-1);
    const chosen=applied.mode==='reverse'?index.items.get(applied.id):index.groups.get(applied.id);
-   return `<div class="bom-query-results"><div class="bom-query-result-bar"><span>${esc(modes[applied.mode])} · <span data-i18n-skip>${esc(chosen?label(chosen):'')}</span> · ${rows.length} 条</span><div class="bom-query-pages"><button type="button" data-bom-prev ${page?'':'disabled'}>上一页</button><span>${page+1} / ${pages}</span><button type="button" data-bom-next ${page<pages-1?'':'disabled'}>下一页</button><button type="button" data-bom-export>下载查询结果</button></div></div>${rows.length&&applied.mode==='multi'?window.ERPBomReport.html({root:chosen,rows:rows.slice(page*pageSize,(page+1)*pageSize)}):rows.length?`<div class="bom-query-scroll"><table aria-label="BOM查询结果"><colgroup>${cols.map(c=>`<col style="width:${c[2]}px">`).join('')}</colgroup><thead><tr>${cols.map(c=>`<th title="${esc(c[1])}"><span>${esc(c[1])}</span></th>`).join('')}</tr></thead><tbody>${rows.slice(page*pageSize,(page+1)*pageSize).map(r=>`<tr data-bom-result-row>${cols.map(c=>`<td ${numericKeys.has(c[0])?'class="bom-query-number"':''} title="${esc(display(r,c[0]))}" data-bom-result="${c[0]}">${esc(display(r,c[0]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="bom-query-empty">${result.issues.length?'没有可可靠汇总的材料，请先处理上方异常。':'未找到符合条件的BOM关系。'}</div>`}</div>`;
+   return `<div class="bom-query-results">${rows.length&&applied.mode==='multi'?window.ERPBomReport.html({root:chosen,rows:rows.slice(page*pageSize,(page+1)*pageSize)}):rows.length?`<div class="bom-query-scroll"><table aria-label="BOM查询结果"><colgroup>${cols.map(c=>`<col style="width:${c[2]}px">`).join('')}</colgroup><thead><tr>${cols.map(c=>`<th title="${esc(c[1])}"><span>${esc(c[1])}</span></th>`).join('')}</tr></thead><tbody>${rows.slice(page*pageSize,(page+1)*pageSize).map(r=>`<tr data-bom-result-row>${cols.map(c=>`<td ${numericKeys.has(c[0])?'class="bom-query-number"':''} title="${esc(display(r,c[0]))}" data-bom-result="${c[0]}">${esc(display(r,c[0]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="bom-query-empty">${result.issues.length?'没有可可靠汇总的材料，请先处理上方异常。':'未找到符合条件的BOM关系。'}</div>`}${pages>1?`<div class="bom-query-pages"><button type="button" data-bom-prev ${page?'':'disabled'}>上一页</button><span>${page+1} / ${pages}</span><button type="button" data-bom-next ${page<pages-1?'':'disabled'}>下一页</button></div>`:''}</div>`;
   }
   function render(){
    index=window.ERPBomQuery.build(getRows());run();
-   return `<section class="bom-query" aria-label="BOM查询"><header class="bom-query-header"><div><h1>BOM 查询</h1><p>输入物品编码查询；不清楚编码时，点击“…”从物品资料中选择。</p></div><button type="button" data-bom-maintain>打开 BOM 原表</button></header><form class="bom-query-form bom-query-compact" data-bom-query><label>展开方式<select data-bom-mode>${Object.entries(modes).map(([key,value])=>`<option value="${key}" ${draft.mode===key?'selected':''}>${value}</option>`).join('')}</select></label><label>物品编码<div class="bom-code-entry"><input data-bom-keyword value="${esc(draft.keyword)}" placeholder="输入物品编码" autocomplete="off" required><button type="button" data-bom-picker aria-label="查询物品资料">…</button></div></label><div class="bom-query-actions"><button type="submit">查询</button><button type="button" data-bom-reset>重置</button></div><p class="bom-query-error" role="alert">${esc(error)}</p></form>${resultHTML()}</section>`;
+   return `<section class="bom-query" aria-label="BOM查询"><header class="bom-query-header"><div><h1>BOM 查询</h1><p>输入物品编码查询；不清楚编码时，点击“…”从物品资料中选择。</p></div><button type="button" data-bom-maintain>打开 BOM 原表</button></header><form class="bom-query-form bom-query-compact" data-bom-query><label>展开方式<select data-bom-mode>${Object.entries(modes).map(([key,value])=>`<option value="${key}" ${draft.mode===key?'selected':''}>${value}</option>`).join('')}</select></label><label>物品编码<div class="bom-code-entry"><input data-bom-keyword value="${esc(draft.keyword)}" placeholder="输入物品编码" autocomplete="off" required><button type="button" data-bom-picker aria-label="查询物品资料">…</button></div></label><div class="bom-query-actions"><button type="submit">查询</button><button type="button" data-bom-reset>重置</button>${result?'<button type="button" data-bom-export>下载查询结果</button>':''}</div><p class="bom-query-error" role="alert">${esc(error)}</p></form>${resultHTML()}</section>`;
   }
   function capture(){const root=host();draft.mode=root.querySelector('[data-bom-mode]').value;const code=root.querySelector('[data-bom-keyword]').value.trim();if(code!==draft.keyword){draft.id='';draft.itemHint=null;}draft.keyword=code;}
   function execute(){

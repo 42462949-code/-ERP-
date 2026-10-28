@@ -40,3 +40,9 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 .supplier-app .supplier-table td:focus-visible{outline:2px solid #2f8067;outline-offset:-2px}
 .supplier-app .supplier-table td input:focus{outline:2px solid #4d85cd;outline-offset:-1px}
 @media(max-width:700px){.supplier-topbar{align-items:flex-start}.supplier-view-actions{width:100%}}
+
+/* Keep header labels centered in the entire cell, independent of filter icons. */
+.supplier-app .supplier-table thead th,
+.supplier-app .supplier-table thead th.erp-has-column-filter{padding-left:2px!important;padding-right:2px!important;text-align:center!important}
+.supplier-app .supplier-table thead .erp-header-label{margin:0;padding:0;text-align:center}
+.supplier-app .supplier-table tbody td{padding-left:0;padding-right:0}

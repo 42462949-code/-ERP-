@@ -33,11 +33,11 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 .supplier-app .supplier-table thead th{height:auto;min-height:39px;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:20px;padding-top:9px;padding-bottom:9px;vertical-align:middle}
 .supplier-app .supplier-table td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .supplier-app .supplier-table .supplier-cell-value{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.supplier-app td.erp-grid-cell-selected{outline:none;box-shadow:inset 0 0 0 2px #2f8067!important;background:#e1f2e7!important}
+.supplier-app td.erp-grid-cell-selected{outline:none;box-shadow:inset 0 0 0 1px #2f8067!important;background:#e1f2e7!important}
 .supplier-app td.erp-column-range-selected{background:#dceee5!important;box-shadow:inset 1px 0 #2f8067,inset -1px 0 #2f8067!important}
-.supplier-app td.erp-column-range-first{border-top:2px solid #2f8067}
-.supplier-app td.erp-column-range-last{border-bottom:2px solid #2f8067}
-.supplier-app .supplier-table td:focus-visible{outline:2px solid #2f8067;outline-offset:-2px}
+.supplier-app td.erp-column-range-first{border-top:1px solid #2f8067}
+.supplier-app td.erp-column-range-last{border-bottom:1px solid #2f8067}
+.supplier-app .supplier-table td:focus-visible{outline:none;box-shadow:inset 0 0 0 1px #2f8067}
 .supplier-app .supplier-table td input:focus{outline:2px solid #4d85cd;outline-offset:-1px}
 @media(max-width:700px){.supplier-topbar{align-items:flex-start}.supplier-view-actions{width:100%}}
 
@@ -55,7 +55,11 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 .supplier-app .supplier-table td input.supplier-cell-editor:disabled{color:#728981;opacity:.65}
 .supplier-app .supplier-table td input.supplier-cell-editor::placeholder{color:#9caeb2;font-size:11px}
 
-.supplier-app .supplier-table input[data-order-quantity][hidden]{display:none!important}
-.supplier-app .supplier-table .supplier-quantity-editing>[data-quantity-display]{display:none}
 
 .supplier-delivery-selection{font-size:12px;color:#6b8490}.supplier-app .supplier-table td:first-child:has([data-delivery-check]){text-align:center!important}
+
+/* Delivery quantity is directly editable; keep a small frame without spin controls. */
+.supplier-app .supplier-table td input.supplier-cell-editor[data-order-quantity]{width:calc(100% - 10px);max-width:105px;height:28px;margin:0 auto;padding:3px 6px;border:1px solid #bdd0d8!important;border-radius:4px;background:#fff;box-shadow:none;appearance:textfield;-moz-appearance:textfield}
+.supplier-app .supplier-table td input.supplier-cell-editor[data-order-quantity]:disabled{background:#f0f5f5}
+.supplier-app .supplier-table td input.supplier-cell-editor[data-order-quantity]::-webkit-inner-spin-button,
+.supplier-app .supplier-table td input.supplier-cell-editor[data-order-quantity]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}

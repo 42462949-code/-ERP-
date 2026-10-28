@@ -57,3 +57,5 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 
 .supplier-app .supplier-table input[data-order-quantity][hidden]{display:none!important}
 .supplier-app .supplier-table .supplier-quantity-editing>[data-quantity-display]{display:none}
+
+.supplier-delivery-selection{font-size:12px;color:#6b8490}.supplier-app .supplier-table td:first-child:has([data-delivery-check]){text-align:center!important}

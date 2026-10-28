@@ -46,3 +46,11 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 .supplier-app .supplier-table thead th.erp-has-column-filter{padding-left:2px!important;padding-right:2px!important;text-align:center!important}
 .supplier-app .supplier-table thead .erp-header-label{margin:0;padding:0;text-align:center}
 .supplier-app .supplier-table tbody td{padding-left:0;padding-right:0}
+
+/* Inline worksheet editors share the cell background and have no inner input frame. */
+.supplier-app .supplier-table td input.supplier-cell-editor{display:block;width:100%;max-width:none;min-width:0;height:100%;margin:0;padding:0;border:0!important;border-radius:0;background:transparent;box-shadow:none;outline:none!important;color:inherit;font:inherit;text-align:inherit!important;appearance:textfield}
+.supplier-app .supplier-table td input.supplier-cell-editor::-webkit-inner-spin-button,
+.supplier-app .supplier-table td input.supplier-cell-editor::-webkit-outer-spin-button{appearance:none;margin:0}
+.supplier-app .supplier-table td:focus-within{box-shadow:inset 0 0 0 1px #2f8067}
+.supplier-app .supplier-table td input.supplier-cell-editor:disabled{color:#728981;opacity:.65}
+.supplier-app .supplier-table td input.supplier-cell-editor::placeholder{color:#9caeb2;font-size:11px}

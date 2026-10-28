@@ -18,7 +18,7 @@ function bind(table,{report=()=>{}}={}){
  }
  function restore(from,to,reverse){const changes=from.at(-1);if(!changes)return;try{apply(changes.map(c=>[c.input,reverse?c.before:c.value]),false);from.pop();to.push(changes);}catch(e){report(e.message);}}
  const grid=window.ERPGridSelection.bind({table,cells:'tbody td',edit:(td,options={})=>{
-  const input=td.querySelector('[data-order-quantity]:not(:disabled)');if(!input)return;
+  const input=td.querySelector('[data-order-quantity]:not(:disabled),[data-order-reply]');if(!input)return;
   input.focus();input.select();if(options.replace){input.value=options.text??'';input.dispatchEvent(new Event('input',{bubbles:true}));}
  }});
  for(const input of inputs){
@@ -29,7 +29,7 @@ function bind(table,{report=()=>{}}={}){
    if(['Enter','Tab'].includes(e.key)){e.preventDefault();try{apply([[input,input.value]]);grid.move(input.closest('td'),e.key,e.shiftKey);}catch(err){report(err.message);}}
   });
  }
- const copy=cell=>cell.querySelector('[data-order-quantity]')?.value??(cell.querySelector('input[type=checkbox]')?(cell.querySelector('input').checked?'✓':''):cell.querySelector('.supplier-cell-value')?.textContent??cell.textContent);
+ const copy=cell=>cell.querySelector('[data-order-quantity],[data-order-reply]')?.value??(cell.querySelector('input[type=checkbox]')?(cell.querySelector('input').checked?'✓':''):cell.querySelector('.supplier-cell-value')?.textContent??cell.textContent);
  const paste=(cell,values)=>{
   const visible=rows(),start=visible.indexOf(cell.parentElement),column=cell.cellIndex;
   if(start<0||start+values.length>visible.length)throw Error('粘贴超出当前可见订单行');
@@ -38,6 +38,7 @@ function bind(table,{report=()=>{}}={}){
  };
  window.ERPTableClipboard.register(table,{copy,paste});
  table.addEventListener('keydown',e=>{
+  if(e.target.closest('[data-order-reply]'))return;
   if((e.ctrlKey||e.metaKey)&&['z','y'].includes(e.key.toLowerCase())){e.preventDefault();restore(e.key.toLowerCase()==='y'||e.shiftKey?redo:undo,e.key.toLowerCase()==='y'||e.shiftKey?undo:redo,e.key.toLowerCase()==='z'&&!e.shiftKey);return;}
   const cell=e.target.closest('td');if(!cell||e.target!==cell)return;
   if(e.key==='Home'||e.key==='End'){e.preventDefault();const rs=rows(),row=e.ctrlKey||e.metaKey?(e.key==='Home'?rs[0]:rs.at(-1)):cell.parentElement;const cells=[...row.cells].filter(c=>!c.hidden);grid.select(e.key==='Home'?cells[0]:cells.at(-1));}

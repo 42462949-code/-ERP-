@@ -1,0 +1,8 @@
+/* Display-only workflow action placeholders. No business handlers or state changes. */
+(()=>{
+const labels=['新增','保存','确认','审核','反审','作废','删除','结案'];
+function bar(){const root=document.createElement('div');root.className='workflow-action-placeholders';root.setAttribute('role','toolbar');root.setAttribute('aria-label','业务功能（待开发）');for(const label of labels){const b=document.createElement('button');b.type='button';b.disabled=true;b.textContent=label;b.title='功能待开发';root.append(b);}return root;}
+function mount(){for(const table of document.querySelectorAll('#content table,.erp-item-picker table,#supplierApp .supplier-grid table,.supplier-dialog .supplier-grid table')){if(table.closest('.sales-layout-dialog,.erp-auth-modal,.sales-import-dialog,.supplier-print-page'))continue;const sales=table.closest('.sales-workspace');if(sales){const tools=sales.querySelector('.sales-tools');if(tools&&!tools.querySelector('.workflow-action-placeholders'))tools.prepend(bar());continue;}const bom=table.closest('.bom-query');if(bom){if(!bom.querySelector('.workflow-action-placeholders'))bom.querySelector('.bom-query-header').after(bar());continue;}const host=table.closest('.supplier-grid,.erp-user-table,.erp-table-wrap,.tablewrap,.table-wrap,.sales-grid-wrap')||table.parentElement;if(host.previousElementSibling?.classList.contains('workflow-action-placeholders'))continue;host.before(bar());}}
+let pending=false;const schedule=()=>{if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;mount();});};
+window.addEventListener('DOMContentLoaded',()=>{new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true});schedule();});
+})();

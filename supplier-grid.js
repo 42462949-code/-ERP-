@@ -8,6 +8,8 @@ function bind(table,{report=()=>{}}={}){
   if(!td.children.length){const span=document.createElement('span');span.className='supplier-cell-value';span.textContent=td.textContent;td.replaceChildren(span);td.title=span.textContent;}
  }
  const rows=()=>[...table.tBodies].flatMap(b=>[...b.rows]).filter(r=>!r.hidden&&r.getClientRects().length&&r.cells[0]?.colSpan===1);
+ const paint=input=>{const display=input.closest('td').querySelector('[data-quantity-display]');if(display){display.textContent=input.value;display.title=input.value;}};
+ const finish=input=>{if(!input.matches('[data-order-quantity]'))return;input.hidden=true;input.closest('td').classList.remove('supplier-quantity-editing');paint(input);};
  const units=text=>{if(!/^(0|[1-9]\d*)(\.\d{1,3})?$/.test(text))throw Error('送货数量须为非负数，最多3位小数');const [a,b='']=text.split('.');return BigInt(a)*1000n+BigInt(b.padEnd(3,'0'));};
  function validate(input,value){if(!input||input.disabled)throw Error('仅可修改可送货订单的“本次送货数量”');const text=String(value).trim();if(text==='')return '';if(units(text)>units(input.max))throw Error('送货数量超过可下推数量');return text;}
  function apply(changes,record=true){
@@ -19,10 +21,12 @@ function bind(table,{report=()=>{}}={}){
  function restore(from,to,reverse){const changes=from.at(-1);if(!changes)return;try{apply(changes.map(c=>[c.input,reverse?c.before:c.value]),false);from.pop();to.push(changes);}catch(e){report(e.message);}}
  const grid=window.ERPGridSelection.bind({table,cells:'tbody td',edit:(td,options={})=>{
   const input=td.querySelector('[data-order-quantity]:not(:disabled),[data-order-reply]');if(!input)return;
-  input.focus();input.select();if(options.replace){input.value=options.text??'';input.dispatchEvent(new Event('input',{bubbles:true}));}
+  if(input.matches('[data-order-quantity]')){input.hidden=false;td.classList.add('supplier-quantity-editing');}input.focus();input.select();if(options.replace){input.value=options.text??'';input.dispatchEvent(new Event('input',{bubbles:true}));}
  }});
  for(const input of inputs){
   valid.set(input,input.value);
+  input.addEventListener('input',()=>paint(input));
+  input.addEventListener('blur',()=>finish(input));
   input.addEventListener('change',()=>{try{apply([[input,input.value]]);}catch(e){report(e.message);}});
   input.addEventListener('keydown',e=>{
    if(e.key==='Escape'){e.preventDefault();input.value=valid.get(input);input.dispatchEvent(new Event('input',{bubbles:true}));grid.select(input.closest('td'));}

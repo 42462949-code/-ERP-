@@ -54,3 +54,6 @@ body.erp-entry-visible{background:#fff}body.erp-entry-visible>.app,body.supplier
 .supplier-app .supplier-table td:focus-within{box-shadow:inset 0 0 0 1px #2f8067}
 .supplier-app .supplier-table td input.supplier-cell-editor:disabled{color:#728981;opacity:.65}
 .supplier-app .supplier-table td input.supplier-cell-editor::placeholder{color:#9caeb2;font-size:11px}
+
+.supplier-app .supplier-table input[data-order-quantity][hidden]{display:none!important}
+.supplier-app .supplier-table .supplier-quantity-editing>[data-quantity-display]{display:none}

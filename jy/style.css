@@ -246,3 +246,31 @@ html[lang=vi] .lean-step h3{font-size:14px}
 .sales-workbook-table .header-label{display:block;overflow-wrap:anywhere;line-height:16px;max-height:48px;overflow:hidden}
 .workspace .sales-workbook-table th .funnel{color:#d8e5ff;bottom:1px;right:6px}
 .workspace .sales-workbook-table td{font-size:9pt;padding:0}
+
+/* Place the welcome text and lean method beside the factory image. */
+.factory-stage{align-items:start;gap:52px;padding-top:42px;padding-bottom:28px;grid-template-columns:.95fr 1.5fr}
+.factory-story{padding:0 0 0 4px}
+.factory-story h1{margin:0 0 22px;font-size:clamp(34px,2.8vw,49px);line-height:1.45}
+.factory-story>p{margin:0 0 24px;font-size:14px;line-height:1.95}
+.factory-story .management-principle.lean-principle{width:100%;margin:33px 0 0;padding:0}
+.factory-story .lean-heading{margin-bottom:13px;gap:13px}
+.factory-story .lean-heading h2{font-size:15px}
+.factory-story .lean-steps{grid-template-columns:repeat(2,minmax(0,1fr));border-radius:9px}
+.factory-story .lean-step{padding:16px 15px 17px}
+.factory-story .lean-step:nth-child(3){border-left:0}
+.factory-story .lean-step:nth-child(n+3){border-top:1px solid #e8eff0}
+.factory-story .lean-step-label{gap:7px;margin-bottom:8px}
+.factory-story .lean-step h3{font-size:13px}
+.factory-story .step-index{width:24px;height:24px;border-radius:6px;font-size:10px}
+.factory-story .management-principle .lean-steps p{font-size:12px;line-height:1.9}
+.factory-home .welcome-footer{margin-top:12px}
+@media(min-width:1800px){.factory-stage{padding-top:46px}.factory-story .management-principle .lean-steps p{font-size:13px}.factory-story .lean-step{padding:18px}.factory-story h1{font-size:49px}}
+@media(max-width:1100px){.factory-stage{gap:30px;grid-template-columns:1fr 1.2fr}.factory-story h1{font-size:32px}.factory-story>p{font-size:12px}.factory-story .lean-step{padding:13px 12px}.factory-story .lean-step h3{font-size:12px}.factory-story .management-principle .lean-steps p{font-size:11px}}
+@media(max-width:750px){.factory-stage{grid-template-columns:1fr;padding-top:28px;gap:25px}.factory-story{padding:0}.factory-story h1{font-size:34px}.factory-story>p{font-size:13px}.factory-story .management-principle.lean-principle{margin-top:28px;text-align:left}.factory-story .lean-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.factory-story .lean-step{padding:16px}.factory-story .lean-step h3{font-size:13px}.factory-story .management-principle .lean-steps p{font-size:12px}}
+@media(max-width:420px){.factory-story .lean-steps{grid-template-columns:1fr}.factory-story .lean-step+.lean-step{border-left:0;border-top:1px solid #e8eff0}}
+
+.factory-story .management-principle.plain-lean{background:transparent;border:0;border-top:1px solid #dfe9e9;border-radius:0;box-shadow:none;padding-top:21px;margin-top:29px}
+.plain-lean h2{font-size:16px;color:#3d6375;margin:0 0 12px;letter-spacing:0;font-weight:600}
+.management-principle.plain-lean .lean-copy p{display:block;font-size:13px;line-height:1.95;color:#78909b;text-align:left;letter-spacing:0;margin:6px 0}
+.management-principle.plain-lean .lean-copy p:last-child{color:#5c7f91}
+@media(max-width:750px){.factory-story .management-principle.plain-lean{padding-top:20px;margin-top:25px}.plain-lean h2{font-size:15px}.management-principle.plain-lean .lean-copy p{font-size:12px;line-height:2}}
